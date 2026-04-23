@@ -3,7 +3,7 @@ package storage;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import storage.InvertedIndex.InvertedIndex;
+import storage.invertedIndex.InvertedIndex;
 
 import java.util.HashMap;
 import java.util.Map;

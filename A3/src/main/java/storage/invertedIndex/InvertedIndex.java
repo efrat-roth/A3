@@ -1,4 +1,4 @@
-package storage.InvertedIndex;
+package storage.invertedIndex;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;

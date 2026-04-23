@@ -1,4 +1,4 @@
-package storage.InvertedIndex;
+package storage.invertedIndex;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

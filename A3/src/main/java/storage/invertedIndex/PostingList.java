@@ -1,4 +1,4 @@
-package storage.InvertedIndex;
+package storage.invertedIndex;
 
 import java.util.HashMap;
 import java.util.Map;
