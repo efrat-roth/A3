@@ -1,5 +1,7 @@
 package analyzing;
+import lombok.Getter;
+
 
 public interface CharFilter {
-    public CharFilter apply(String text);
+    String apply(String input);
 }
