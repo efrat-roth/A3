@@ -1,4 +1,20 @@
 package analyzing.analyzerStrategy;
 
-public class DefaultAnalyzerStrategy {
+import analyzing.Analyzer;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import storage.Field;
+
+import java.util.List;
+
+@RequiredArgsConstructor
+public class DefaultAnalyzerStrategy implements AnalyzerStrategy {
+    @Getter
+    private final Analyzer analyzer;
+
+    @Override
+    public Analyzer getAnalyzer(String field, List<Field> fields) {
+
+        return analyzer;
+    }
 }

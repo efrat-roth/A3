@@ -1,4 +1,10 @@
 package analyzing.analyzerStrategy;
 
-public class AnalyzerStrategy {
+import analyzing.Analyzer;
+import storage.Field;
+
+import java.util.List;
+
+public interface AnalyzerStrategy {
+    public Analyzer getAnalyzer(String field, List<Field> fields);
 }
