@@ -7,6 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 public interface IndexReader {
-    Map<String, PostingList> getPosting(Field field, List<String> terms);
+    Map<String, PostingList> getPosting(String fieldName);
     QueryContext buildContext(List<String> terms);
 }
