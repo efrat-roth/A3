@@ -45,6 +45,9 @@ public class InvertedIndex {
         } else
             tokenEntry.put(docId, new TermStats(1.0 / docLength, List.of(position)));
     }
+    public PostingList getPostingList(String fieldName, String term){
+        return index.get(fieldName).get(term);
+    }
 }
 
 
