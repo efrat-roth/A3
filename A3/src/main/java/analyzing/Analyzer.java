@@ -1,5 +1,8 @@
 package analyzing;
 
+import analyzing.charFilters.CharFilter;
+import analyzing.tokenFilters.TokenFilter;
+import analyzing.tokenizers.Tokenizer;
 import lombok.Builder;
 
 import java.util.List;

@@ -1,5 +1,4 @@
-package analyzing;
-import lombok.Getter;
+package analyzing.charFilters;
 
 
 public interface CharFilter {

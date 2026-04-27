@@ -1,10 +1,8 @@
-package analyzing;
+package analyzing.tokenizers;
 
-import lombok.Getter;
+import analyzing.Token;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public interface Tokenizer {
     List<Token> tokenize(String input);

@@ -1,4 +1,4 @@
-package analyzing;
+package analyzing.charFilters;
 
 import lombok.AllArgsConstructor;
 

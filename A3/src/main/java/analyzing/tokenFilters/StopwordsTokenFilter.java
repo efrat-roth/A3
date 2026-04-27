@@ -1,5 +1,6 @@
-package analyzing;
+package analyzing.tokenFilters;
 
+import analyzing.Token;
 import lombok.AllArgsConstructor;
 
 import java.util.HashSet;

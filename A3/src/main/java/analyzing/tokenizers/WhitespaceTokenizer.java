@@ -1,4 +1,6 @@
-package analyzing;
+package analyzing.tokenizers;
+
+import analyzing.Token;
 
 import java.util.ArrayList;
 import java.util.List;
