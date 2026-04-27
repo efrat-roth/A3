@@ -5,7 +5,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import storage.invertedIndex.InvertedIndex;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -14,31 +16,28 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public class IndexStorage {
     @Getter
-    private final Map<String, HashMap<Field, String>> documents = new HashMap<>();
+    private final Map<String, List<Field>> documents = new HashMap<>();
     @Getter
     private final InvertedIndex invertedIndex;
 
-    public void addDocument(String documentId, HashMap<Field, String> document) {
+    public void addDocument(String documentId, List<Field> document) {
         if (document == null) {
             log.warn("Document has not been initialized: null pointer");
             return;
         } else if (this.documents.containsKey(documentId)) {
             log.warn("Document has already been initialized: id {}", documentId);
         }
-        int docLength = document.keySet().stream().map(Field::getLength).mapToInt(Integer::intValue).sum();
+        int docLength = document.stream().mapToInt(Field::getLength).sum();
         //add to document
-        documents.put(documentId, new HashMap<>(document.entrySet().stream()
-                .filter(item -> item.getKey().isStored())
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))));
-        //add each term to the invertedIndex
-        Stream<Map.Entry<Field, String>> indexedFields = document.entrySet().stream()
-                .filter(field -> field.getKey().isIndexed());
-        indexedFields.forEach(field -> field.getKey().getValues().forEach((key, value1) ->
-                invertedIndex.addField(field.getKey().getFieldName(), key, documentId, value1, docLength)));
+        documents.put(documentId, new ArrayList<>(document.stream()
+                .filter(Field::isStored)
+                .collect(Collectors.toList())) {
+        });
+
 
     }
 
-    public HashMap<Field, String> getDocument(String documentId) {
+    public List<Field> getDocument(String documentId) {
         if (this.documents.containsKey(documentId)) {
             return this.documents.get(documentId);
         }

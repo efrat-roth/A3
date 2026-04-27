@@ -23,11 +23,12 @@ dependencies {
     implementation("org.slf4j:slf4j-api:2.0.9")
 
     // Log4j2 Core and API
-    implementation("org.apache.logging.log4j:log4j-core:2.20.0")
+    implementation("org.apache.logging.log4j:log4j-core:2.25.4")
     implementation("org.apache.logging.log4j:log4j-api:2.20.0")
 
     // SLF4J to Log4j2 Bridge (Routes SLF4J calls to Log4j2)
     implementation("org.apache.logging.log4j:log4j-slf4j2-impl:2.20.0")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.18.0")
 }
 
 tasks.test {

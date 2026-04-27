@@ -1,10 +1,10 @@
 package storage;
 
-import  lombok.Data;
+import lombok.Data;
+import lombok.Getter;
 import lombok.NonNull;
 
 import java.lang.reflect.Type;
-import java.util.List;
 import java.util.Map;
 
 @Data
@@ -16,6 +16,7 @@ public class Field {
     private int length;
     private boolean stored;
     private boolean indexed;
+    private final String content;
     //term and position
     private final Map<String, Integer> values;
 }

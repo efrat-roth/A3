@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Slf4j
 public interface InvertedIndex {
     //String: FieldName, String2: term, String3:docId
 
