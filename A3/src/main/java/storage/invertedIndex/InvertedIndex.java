@@ -15,7 +15,8 @@ public interface InvertedIndex {
 
     public void addTerm(String fieldName, String token, String docId, int position, int docLength) ;
 
-    public PostingList getPostingList(String fieldName, String term);
+    public PostingList getPostingListByTerm(String fieldName, String term);
+    public  Map<String,PostingList> getPostings(String fieldName);
 }
 
 
