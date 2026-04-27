@@ -42,7 +42,9 @@ public class InMemoryInvertedIndex implements InvertedIndex {
         } else
             tokenEntry.put(docId, new TermStats(1.0 / docLength, List.of(position)));
     }
-    public PostingList getPostingList(String fieldName, String term){
+    public PostingList getPostingListByTerm(String fieldName, String term){
         return index.get(fieldName).get(term);
     }
+    public Map<String,PostingList> getPostings(String fieldName){
+        return index.get(fieldName); }
 }
