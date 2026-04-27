@@ -1,4 +1,4 @@
 package scoring;
 
-public class ScoreResult {
+public record ScoreResult(String docId, double totalScore) {
 }

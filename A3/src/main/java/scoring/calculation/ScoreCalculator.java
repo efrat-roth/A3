@@ -1,6 +1,7 @@
-package scoring;
+package scoring.calculation;
 
 import reading.QueryContext;
+import scoring.ScoreResult;
 
 import java.util.List;
 
