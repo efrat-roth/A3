@@ -28,7 +28,6 @@ public class IndexStorage {
             log.warn("Document has already been initialized: id {}", documentId);
         }
         int docLength = document.stream().mapToInt(Field::getLength).sum();
-        //add to document
         documents.put(documentId, new ArrayList<>(document.stream()
                 .filter(Field::isStored)
                 .collect(Collectors.toList())) {

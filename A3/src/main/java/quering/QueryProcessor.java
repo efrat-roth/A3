@@ -30,7 +30,6 @@ public class QueryProcessor {
                     .analyze(conditions.get(fieldName));
 
             Map<String, PostingList> postingsTerms = indexReader.getPosting(fieldName);
-            // Filter the postings of term in the query
             Map<String, PostingList> postingsTermsInQuery = postingsTerms.entrySet().stream()
                     .filter(entry -> queryFieldTokens.stream().anyMatch(token ->
                             entry.getKey().equals(token.term())))

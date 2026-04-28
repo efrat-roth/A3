@@ -1,7 +1,6 @@
 package reading;
 
 import lombok.Data;
-import storage.invertedIndex.PostingList;
 import storage.invertedIndex.TermStats;
 
 import java.util.List;

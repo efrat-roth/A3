@@ -23,7 +23,6 @@ public class InMemoryInvertedIndex implements InvertedIndex {
         if (!index.containsKey(fieldName))
             addField(fieldName, token, docId, position, docLength);
         Map<String, PostingList> fieldEntry = index.get(fieldName);
-        //Not has token already
         if (!fieldEntry.containsKey(token)) {
             fieldEntry.put(token, new PostingList(Map.of(docId, new TermStats(1, List.of(position)))));
         } else {
@@ -43,6 +42,7 @@ public class InMemoryInvertedIndex implements InvertedIndex {
             tokenEntry.put(docId, new TermStats(1.0 / docLength, List.of(position)));
     }
     public PostingList getPostingListByTerm(String fieldName, String term){
+
         return index.get(fieldName).get(term);
     }
     public Map<String,PostingList> getPostings(String fieldName){
