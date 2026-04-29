@@ -25,8 +25,7 @@ public class QueryProcessor {
     private Set<String> findDocsOfField(Map<String, String> conditions) {
         Set<String> matchDocs = new TreeSet<>();
         for (String fieldName : conditions.keySet()) {
-            //לתקן עם הקריאה ל null
-            List<Token> queryFieldTokens = analyzer.getAnalyzer(fieldName, null)
+            List<Token> queryFieldTokens = analyzer.getAnalyzer(fieldName)
                     .analyze(conditions.get(fieldName));
 
             Map<String, PostingList> postingsTerms = indexReader.getPosting(fieldName);
@@ -49,7 +48,7 @@ public class QueryProcessor {
         Set<String> matchDocs = findDocsOfField(conditions);
         Map<String, List<String>> fieldsTokensQuery = conditions.keySet().stream().collect(Collectors.toMap(
                                 fieldName -> fieldName,
-                                fieldName -> analyzer.getAnalyzer(fieldName, null)
+                                fieldName -> analyzer.getAnalyzer(fieldName)
                                         .analyze(conditions.get(fieldName)).stream()
                 .map(Token::term)
                 .collect(Collectors.toList())));

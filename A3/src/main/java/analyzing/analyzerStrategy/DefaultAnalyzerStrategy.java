@@ -13,7 +13,7 @@ public class DefaultAnalyzerStrategy implements AnalyzerStrategy {
     private final Analyzer analyzer;
 
     @Override
-    public Analyzer getAnalyzer(String field, List<Field> fields) {
+    public Analyzer getAnalyzer(String field) {
 
         return analyzer;
     }

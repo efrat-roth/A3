@@ -6,5 +6,5 @@ import storage.Field;
 import java.util.List;
 
 public interface AnalyzerStrategy {
-    public Analyzer getAnalyzer(String field, List<Field> fields);
+    public Analyzer getAnalyzer(String field);
 }

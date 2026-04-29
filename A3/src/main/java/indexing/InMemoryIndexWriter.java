@@ -17,7 +17,7 @@ public class InMemoryIndexWriter implements IndexWriter {
         int docLength = document.stream().mapToInt(Field::getLength).sum();
         Stream<Field> indexedFields = document.stream().filter(Field::isIndexed);
         indexedFields.forEach(field ->
-                analyzerStrategy.getAnalyzer(field.getFieldName(), document)
+                analyzerStrategy.getAnalyzer(field.getFieldName())
                         .analyze(field.getContent()).forEach(term -> indexStorage.getInvertedIndex()
                                 .addField(field.getFieldName(), term.term(), docId, term.position(), docLength)));
         indexStorage.addDocument(docId, document);

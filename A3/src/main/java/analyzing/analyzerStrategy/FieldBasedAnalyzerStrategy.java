@@ -14,7 +14,7 @@ public class FieldBasedAnalyzerStrategy implements AnalyzerStrategy {
     private final Map<String, Analyzer> analyzers;
 
     @Override
-    public Analyzer getAnalyzer(String field, List<Field> fields) {
+    public Analyzer getAnalyzer(String field) {
 
         return analyzers.get(field);
     }
