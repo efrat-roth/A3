@@ -29,6 +29,7 @@ dependencies {
     // SLF4J to Log4j2 Bridge (Routes SLF4J calls to Log4j2)
     implementation("org.apache.logging.log4j:log4j-slf4j2-impl:2.20.0")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.18.0")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml")
 }
 
 tasks.test {
