@@ -1,5 +1,8 @@
 package analyzing.charFilters;
 
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
 public class LowercaseCharFilter implements CharFilter {
 
     @Override
