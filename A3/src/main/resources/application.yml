@@ -1,0 +1,34 @@
+storage:
+  type: inMemory
+  documentsPath: ./data/documents
+
+index:
+  maxResults: 100
+
+analyzer:
+  strategy: fieldBased
+
+  default:
+    charFilters:
+      - lowercase
+      - punctuation
+    tokenizer: whitespace
+    tokenFilters:
+      - stopwords
+
+  fields:
+    title:
+      charFilters:
+        - lowercase
+        - punctuation
+      tokenizer: whitespace
+      tokenFilters:
+        - stopwords
+
+    body:
+      charFilters:
+        - lowercase
+        - punctuation
+      tokenizer: whitespace
+      tokenFilters:
+        - stopwords
