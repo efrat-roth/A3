@@ -11,5 +11,5 @@ public class StorageConfig {
 
     private String type;
 
-    private String logFilePath;
+    private String stopwordsFilePath;
 }

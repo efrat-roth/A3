@@ -1,12 +1,13 @@
 storage:
   type: inMemory
-  documentsPath: ./data/documents
+  stopwordsFilePath: ./data/stopwords
 
 index:
   maxResults: 100
+  scoringAlgorithm: tfIdf
 
 analyzer:
-  strategy: fieldBased
+  strategy: default
 
   default:
     charFilters:
