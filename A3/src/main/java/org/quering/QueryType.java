@@ -1,11 +1,30 @@
 package org.quering;
 
 public enum QueryType {
-    AND,
-    OR,
-    NOT,
-    MUST,
-    RANGE,
-    INCLUDE,
-    EXCLUDE,
+    AND("and"),
+    OR("or"),
+    NOT("not"),
+    MUST("must"),
+    RANGE("range"),
+    INCLUDE("include"),
+    EXCLUDE("exclude");
+
+    private final String value;
+
+    QueryType(String value) {
+        this.value = value;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public static QueryType fromValue(String value) {
+        for (QueryType queryType : values()) {
+            if (queryType.value.equalsIgnoreCase(value)) {
+                return queryType;
+            }
+        }
+        throw new IllegalArgumentException("Unknown query type: " + value);
+    }
 }
