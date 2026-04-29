@@ -1,0 +1,27 @@
+package org.analyzing;
+
+import org.analyzing.charFilters.CharFilter;
+import org.analyzing.tokenFilters.TokenFilter;
+import org.analyzing.tokenizers.Tokenizer;
+import lombok.Builder;
+
+import java.io.IOException;
+import java.util.List;
+
+@Builder
+public class Analyzer {
+    private List<CharFilter> charFilters;
+    private Tokenizer tokenizer;
+    private List<TokenFilter> tokenFilters;
+
+    public List<Token> analyze(String input) throws IOException {
+        for (CharFilter charFilter : charFilters) {
+            input = charFilter.apply(input);
+        }
+        List<Token> tokensOfInput = tokenizer.tokenize(input);
+        for (TokenFilter tokenFilter : tokenFilters) {
+            tokensOfInput = tokenFilter.apply(tokensOfInput);
+        }
+        return tokensOfInput;
+    }
+}
