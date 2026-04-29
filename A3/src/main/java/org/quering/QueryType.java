@@ -1,5 +1,8 @@
 package org.quering;
 
+import lombok.Getter;
+
+@Getter
 public enum QueryType {
     AND("and"),
     OR("or"),
@@ -13,10 +16,6 @@ public enum QueryType {
 
     QueryType(String value) {
         this.value = value;
-    }
-
-    public String getValue() {
-        return value;
     }
 
     public static QueryType fromValue(String value) {
