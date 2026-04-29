@@ -6,7 +6,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 public class FileReader {
-    public List<String> readFileLines(String fileName) throws IOException {
+    public static List<String> readFileLines(String fileName) throws IOException {
         //קריאה מקובץ קונפיגורציה של הpath לפי שם הקובץ
         return Files.readAllLines(Path.of(fileName));
 

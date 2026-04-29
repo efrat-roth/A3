@@ -5,6 +5,7 @@ import analyzing.tokenFilters.TokenFilter;
 import analyzing.tokenizers.Tokenizer;
 import lombok.Builder;
 
+import java.io.IOException;
 import java.util.List;
 
 @Builder
@@ -13,7 +14,7 @@ public class Analyzer {
     private Tokenizer tokenizer;
     private List<TokenFilter> tokenFilters;
 
-    public List<Token> analyze(String input) {
+    public List<Token> analyze(String input) throws IOException {
         for (CharFilter charFilter : charFilters) {
             input = charFilter.apply(input);
         }

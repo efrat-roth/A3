@@ -4,10 +4,16 @@ import analyzing.Token;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
+import utils.ConfigLoader;
+import utils.config.AppConfig;
+
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static utils.FileReader.readFileLines;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,15 +21,17 @@ public class StopwordsTokenFilter implements TokenFilter {
     private Set<String> stopwords = new HashSet<>();
 
     @Override
-    public List<Token> apply(List<Token> tokens) {
+    public List<Token> apply(List<Token> tokens) throws IOException {
         stopwords = readStopwords();
         tokens = tokens.stream().filter(token -> !stopwords.contains(token.term())).collect(Collectors.toList());
         return tokens;
     }
 
     //To implement after readerFile class
-    public Set<String> readStopwords() {
-        return new HashSet<>();
+    public Set<String> readStopwords() throws IOException {
+
+        AppConfig config = ConfigLoader.load();
+        return new HashSet<>(readFileLines(config.storageConfig.getStopwordsFilePath()));
     }
 
 }
