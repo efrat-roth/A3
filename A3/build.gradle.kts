@@ -30,6 +30,9 @@ dependencies {
     implementation("org.apache.logging.log4j:log4j-slf4j2-impl:2.20.0")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.18.0")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
+    testImplementation("org.mockito:mockito-core:5.11.0")
+    testImplementation("org.assertj:assertj-core:3.25.3")
 }
 
 tasks.test {
