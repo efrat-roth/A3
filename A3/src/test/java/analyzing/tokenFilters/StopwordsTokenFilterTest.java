@@ -75,7 +75,7 @@ public class StopwordsTokenFilterTest {
 
     @Test
     void applyShouldPropagateIOExceptionWhenStopwordsCannotBeRead() {
-        StopwordsTokenFilter filter = new StopwordsTokenFilter();
+        StopwordsTokenFilter filter = new StopwordsTokenFilter(Set.of("and", "or" ));
 
         assertThatThrownBy(() -> filter.apply(List.of(new Token("hello", 0))))
                 .isInstanceOf(IOException.class);

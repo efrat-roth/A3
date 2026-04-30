@@ -5,6 +5,8 @@ import org.analyzing.tokenFilters.TokenFilter;
 import org.analyzing.tokenFilters.TokenFilterRegistry;
 import org.junit.jupiter.api.Test;
 
+import java.util.Set;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -12,7 +14,7 @@ public class TokenFilterRegistryTest {
 
     @Test
     void getShouldReturnStopwordsTokenFilterForStopwordsName() {
-        TokenFilterRegistry registry = new TokenFilterRegistry();
+        TokenFilterRegistry registry = new TokenFilterRegistry(Set.of("and"));
 
         TokenFilter filter = registry.get("stopwords");
 
@@ -21,7 +23,7 @@ public class TokenFilterRegistryTest {
 
     @Test
     void getShouldReturnNewFilterInstanceEachTime() {
-        TokenFilterRegistry registry = new TokenFilterRegistry();
+        TokenFilterRegistry registry = new TokenFilterRegistry(Set.of("and"));
 
         TokenFilter firstFilter = registry.get("stopwords");
         TokenFilter secondFilter = registry.get("stopwords");
@@ -31,7 +33,7 @@ public class TokenFilterRegistryTest {
 
     @Test
     void getShouldThrowNullPointerExceptionForUnknownFilterName() {
-        TokenFilterRegistry registry = new TokenFilterRegistry();
+        TokenFilterRegistry registry = new TokenFilterRegistry(Set.of("and"));
 
         assertThatThrownBy(() -> registry.get("unknown"))
                 .isInstanceOf(NullPointerException.class);
