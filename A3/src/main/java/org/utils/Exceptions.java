@@ -87,6 +87,16 @@ public final class Exceptions {
             super(message);
         }
     }
+    public static class AnalyzerConfigurationException extends RuntimeException {
+        public AnalyzerConfigurationException(String message) {
+            super(message);
+        }
+    }
 
+    public static class UnsupportedAnalyzerStrategyException extends RuntimeException {
+        public UnsupportedAnalyzerStrategyException(String message) {
+            super(message);
+        }
+    }
 
 }

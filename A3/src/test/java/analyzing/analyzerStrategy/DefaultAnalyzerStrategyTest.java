@@ -12,8 +12,8 @@ public class DefaultAnalyzerStrategyTest {
 
     @Test
     void getAnalyzerShouldReturnConfiguredAnalyzerForAnyField() throws Exception {
-        DefaultAnalyzerStrategy strategy = new DefaultAnalyzerStrategy();
         Analyzer analyzer = Analyzer.builder().build();
+        DefaultAnalyzerStrategy strategy = new DefaultAnalyzerStrategy(analyzer);
         setPrivateField(strategy, "analyzer", analyzer);
 
         assertThat(strategy.getAnalyzer("title")).isSameAs(analyzer);
@@ -22,7 +22,8 @@ public class DefaultAnalyzerStrategyTest {
 
     @Test
     void getAnalyzerShouldReturnNullWhenAnalyzerWasNotConfigured() {
-        DefaultAnalyzerStrategy strategy = new DefaultAnalyzerStrategy();
+        Analyzer analyzer = Analyzer.builder().build();
+        DefaultAnalyzerStrategy strategy = new DefaultAnalyzerStrategy(analyzer);
 
         assertThat(strategy.getAnalyzer("title")).isNull();
     }

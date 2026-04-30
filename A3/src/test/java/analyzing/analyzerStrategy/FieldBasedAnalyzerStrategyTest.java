@@ -5,6 +5,8 @@ import org.analyzing.analyzerStrategy.FieldBasedAnalyzerStrategy;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -14,9 +16,12 @@ public class FieldBasedAnalyzerStrategyTest {
 
     @Test
     void getAnalyzerShouldReturnAnalyzerConfiguredForRequestedField() throws Exception {
-        FieldBasedAnalyzerStrategy strategy = new FieldBasedAnalyzerStrategy();
+        Map <String, Analyzer> analyzers = new HashMap<String, Analyzer>();
         Analyzer titleAnalyzer = Analyzer.builder().build();
+        analyzers.put("title", titleAnalyzer);
         Analyzer bodyAnalyzer = Analyzer.builder().build();
+        analyzers.put("body", bodyAnalyzer);
+        FieldBasedAnalyzerStrategy strategy = new FieldBasedAnalyzerStrategy(analyzers);
         setPrivateField(strategy, "analyzers", Map.of(
                 "title", titleAnalyzer,
                 "body", bodyAnalyzer
@@ -28,7 +33,9 @@ public class FieldBasedAnalyzerStrategyTest {
 
     @Test
     void getAnalyzerShouldReturnNullWhenFieldIsNotConfigured() throws Exception {
-        FieldBasedAnalyzerStrategy strategy = new FieldBasedAnalyzerStrategy();
+        Map <String, Analyzer> analyzers = new HashMap<String, Analyzer>();
+        analyzers.put("title", Analyzer.builder().build());
+        FieldBasedAnalyzerStrategy strategy = new FieldBasedAnalyzerStrategy(analyzers);
         setPrivateField(strategy, "analyzers", Map.of("title", Analyzer.builder().build()));
 
         assertThat(strategy.getAnalyzer("missing")).isNull();
@@ -36,7 +43,8 @@ public class FieldBasedAnalyzerStrategyTest {
 
     @Test
     void getAnalyzerShouldThrowNullPointerExceptionWhenAnalyzersWereNotConfigured() {
-        FieldBasedAnalyzerStrategy strategy = new FieldBasedAnalyzerStrategy();
+        Map <String, Analyzer> analyzers = new HashMap<String, Analyzer>();
+        FieldBasedAnalyzerStrategy strategy = new FieldBasedAnalyzerStrategy(analyzers);
 
         assertThatThrownBy(() -> strategy.getAnalyzer("title"))
                 .isInstanceOf(NullPointerException.class);

@@ -1,28 +1,33 @@
 package org.analyzing.analyzerStrategy;
 
-import org.analyzing.Analyzer;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.analyzing.Analyzer;
+import org.utils.Exceptions;
 
 import java.util.Map;
 
 @Slf4j
-@NoArgsConstructor
 public class FieldBasedAnalyzerStrategy implements AnalyzerStrategy {
-    @Getter
-    private Map<String, Analyzer> analyzers;
+
+    private final Map<String, Analyzer> analyzers;
+
+    public FieldBasedAnalyzerStrategy(Map<String, Analyzer> analyzers) {
+        this.analyzers = analyzers;
+    }
 
     @Override
     public Analyzer getAnalyzer(String field) {
-        log.debug("Retrieving field-based analyzer: field {}", field);
-        if (analyzers == null) {
-            log.warn("Field-based analyzers have not been initialized: field {}", field);
-        } else if (!analyzers.containsKey(field)) {
-            log.warn("Analyzer not found for field: {}", field);
+
+        if (analyzers == null || analyzers.isEmpty()) {
+            throw new Exceptions.AnalyzerConfigurationException("Field analyzers are not configured");
         }
+
         Analyzer analyzer = analyzers.get(field);
-        log.debug("Field-based analyzer retrieved: field {}", field);
+
+        if (analyzer == null) {
+            throw new Exceptions.AnalyzerNotFoundException("No analyzer configured for field: " + field);
+        }
+
         return analyzer;
     }
 }
