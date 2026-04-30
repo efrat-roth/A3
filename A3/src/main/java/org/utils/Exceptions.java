@@ -76,5 +76,17 @@ public final class Exceptions {
         }
     }
 
+    public static class IndexingException extends RuntimeException {
+        public IndexingException(String message, Throwable cause) {
+            super(message, cause);
+        }
+    }
+
+    public static class AnalyzerNotFoundException extends RuntimeException {
+        public AnalyzerNotFoundException(String message) {
+            super(message);
+        }
+    }
+
 
 }
