@@ -10,8 +10,7 @@ import java.util.function.Supplier;
 @Slf4j
 public class ScoreRegistry {
 
-    private final Map<String, Supplier<ScoreCalculator>> scorers =
-            new HashMap<>();
+    private final Map<String, Supplier<ScoreCalculator>> scorers = new HashMap<>();
 
     public ScoreRegistry() {
         scorers.put("tfidf", TfIdfScorer::new);
@@ -24,9 +23,7 @@ public class ScoreRegistry {
 
         if (name == null || name.isBlank()) {
             log.error("Scorer name is null or blank");
-            throw new Exceptions.UnsupportedScoringAlgorithmException(
-                    "Scoring algorithm name cannot be null or blank"
-            );
+            throw new Exceptions.UnsupportedScoringAlgorithmException("Scoring algorithm name cannot be null or blank");
         }
 
         Supplier<ScoreCalculator> supplier = scorers.get(name);
@@ -34,9 +31,7 @@ public class ScoreRegistry {
         if (supplier == null) {
             log.warn("Unknown scorer requested: {}", name);
 
-            throw new Exceptions.UnsupportedScoringAlgorithmException(
-                    "Unsupported scoring algorithm: " + name
-            );
+            throw new Exceptions.UnsupportedScoringAlgorithmException("Unsupported scoring algorithm: " + name);
         }
 
         log.debug("Scorer found: {}", name);
