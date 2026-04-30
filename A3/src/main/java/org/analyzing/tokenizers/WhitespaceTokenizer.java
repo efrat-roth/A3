@@ -1,13 +1,16 @@
 package org.analyzing.tokenizers;
 
+import lombok.extern.slf4j.Slf4j;
 import org.analyzing.Token;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 public class WhitespaceTokenizer implements Tokenizer {
     @Override
     public List<Token> tokenize(String input) {
+        log.debug("Tokenizing input with whitespace tokenizer: inputLength {}", input.length());
         List<Token> tokens = new ArrayList<>();
         int position = 1;
         StringBuilder sb = new StringBuilder();
@@ -29,6 +32,7 @@ public class WhitespaceTokenizer implements Tokenizer {
             tokens.add(new Token(sb.toString(), position));
         }
 
+        log.debug("Whitespace tokenization completed: inputLength {}, tokenCount {}", input.length(), tokens.size());
         return tokens;
     }
 }
