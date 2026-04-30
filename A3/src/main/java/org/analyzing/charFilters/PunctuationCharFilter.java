@@ -1,29 +1,51 @@
 package org.analyzing.charFilters;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.utils.Exceptions;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @Slf4j
-@NoArgsConstructor
-@AllArgsConstructor
 public class PunctuationCharFilter implements CharFilter {
-    Set<Character> punctuations = new HashSet<Character>();
+
+    private static final Set<Character> DEFAULT_PUNCTUATIONS = Set.of('.', ',', ';', ':', '!', '?', '"', '\'');
+    private final Set<Character> punctuations;
+
+    public PunctuationCharFilter() {
+        this.punctuations = new HashSet<>(DEFAULT_PUNCTUATIONS);
+    }
+
+    public PunctuationCharFilter(Set<Character> punctuations) {
+        if (punctuations == null || punctuations.isEmpty()) {
+            throw new Exceptions.AnalyzerConfigurationException("Punctuation set cannot be null or empty");
+        }
+
+        this.punctuations = new HashSet<>(punctuations);
+    }
 
     @Override
     public String apply(String input) {
-        log.debug("Applying punctuation char filter: inputLength {}, punctuationCount {}", input.length(), punctuations.size());
+
+        if (input == null) {
+            throw new Exceptions.InvalidDocumentException("Input cannot be null");
+        }
+
+        log.debug("Applying punctuation char filter: inputLength {}, punctuationCount {}"
+                ,input.length(),punctuations.size());
+
         StringBuilder sb = new StringBuilder();
+
         for (char c : input.toCharArray()) {
             if (!punctuations.contains(c)) {
                 sb.append(c);
             }
         }
+
         String output = sb.toString();
-        log.debug("Punctuation char filter applied: inputLength {}, outputLength {}", input.length(), output.length());
+
+        log.debug("Punctuation filter applied: outputLength {}",output.length());
+
         return output;
     }
 }
