@@ -58,5 +58,23 @@ public final class Exceptions {
         }
     }
 
+    public static class InvalidQueryException extends RuntimeException {
+        public InvalidQueryException(String message) {
+            super(message);
+        }
+    }
+
+    public static class UnsupportedQueryTypeException extends RuntimeException {
+        public UnsupportedQueryTypeException(String message) {
+            super(message);
+        }
+    }
+
+    public static class QueryProcessingException extends RuntimeException {
+        public QueryProcessingException(String message, Throwable cause) {
+            super(message, cause);
+        }
+    }
+
 
 }
