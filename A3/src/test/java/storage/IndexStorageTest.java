@@ -5,10 +5,14 @@ import org.storage.Field;
 import org.storage.IndexStorage;
 import org.storage.invertedIndex.InMemoryInvertedIndex;
 import org.storage.invertedIndex.InvertedIndex;
+import org.utils.Exceptions.DocumentNotFoundException;
+import org.utils.Exceptions.DuplicateDocumentException;
+import org.utils.Exceptions.InvalidDocumentException;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 
 public class IndexStorageTest {
@@ -38,9 +42,10 @@ public class IndexStorageTest {
     void addDocumentShouldIgnoreNullDocument() {
         IndexStorage storage = new IndexStorage(new InMemoryInvertedIndex());
 
-        storage.addDocument("doc-1", null);
+        assertThatThrownBy(() -> storage.addDocument("doc-1", null))
+                .isInstanceOf(InvalidDocumentException.class)
+                .hasMessage("Document cannot be null");
 
-        assertThat(storage.getDocument("doc-1")).isNull();
         assertThat(storage.getDocuments()).isEmpty();
     }
 
@@ -48,7 +53,9 @@ public class IndexStorageTest {
     void getDocumentShouldReturnNullWhenDocumentDoesNotExist() {
         IndexStorage storage = new IndexStorage(new InMemoryInvertedIndex());
 
-        assertThat(storage.getDocument("missing-doc")).isNull();
+        assertThatThrownBy(() -> storage.getDocument("missing-doc"))
+                .isInstanceOf(DocumentNotFoundException.class)
+                .hasMessage("Document not found: missing-doc");
     }
 
     @Test
@@ -58,9 +65,11 @@ public class IndexStorageTest {
         Field replacementField = new Field("title", String.class, 7, true, true, "updated");
 
         storage.addDocument("doc-1", List.of(originalField));
-        storage.addDocument("doc-1", List.of(replacementField));
 
-        assertThat(storage.getDocument("doc-1")).containsExactly(replacementField);
+        assertThatThrownBy(() -> storage.addDocument("doc-1", List.of(replacementField)))
+                .isInstanceOf(DuplicateDocumentException.class)
+                .hasMessage("Document already exists: doc-1");
+        assertThat(storage.getDocument("doc-1")).containsExactly(originalField);
         assertThat(storage.getDocuments()).hasSize(1);
     }
 

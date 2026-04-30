@@ -3,8 +3,12 @@ package storage;
 import org.junit.jupiter.api.Test;
 import org.storage.invertedIndex.InMemoryInvertedIndex;
 import org.storage.invertedIndex.PostingList;
+import org.utils.Exceptions.FieldNotFoundException;
+import org.utils.Exceptions.InvalidIndexEntryException;
+import org.utils.Exceptions.TermNotFoundException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class InMemoryInvertedIndexTest {
 
@@ -60,5 +64,34 @@ public class InMemoryInvertedIndexTest {
         assertThat(postingList.getPostings().get("doc-1").getTf()).isEqualTo(0.25);
         assertThat(postingList.getPostings().get("doc-2").getTf()).isEqualTo(0.5);
         assertThat(postingList.getPostings().get("doc-2").getPositions()).containsExactly(1);
+    }
+
+    @Test
+    void addTermShouldThrowWhenDocumentLengthIsInvalid() {
+        InMemoryInvertedIndex index = new InMemoryInvertedIndex();
+
+        assertThatThrownBy(() -> index.addTerm("body", "java", "doc-1", 1, 0))
+                .isInstanceOf(InvalidIndexEntryException.class)
+                .hasMessage("Document length must be positive: 0");
+    }
+
+    @Test
+    void getPostingsShouldThrowWhenFieldDoesNotExist() {
+        InMemoryInvertedIndex index = new InMemoryInvertedIndex();
+
+        assertThatThrownBy(() -> index.getPostings("missing"))
+                .isInstanceOf(FieldNotFoundException.class)
+                .hasMessage("Field not found in inverted index: missing");
+    }
+
+    @Test
+    void getPostingListByTermShouldThrowWhenTermDoesNotExist() {
+        InMemoryInvertedIndex index = new InMemoryInvertedIndex();
+
+        index.addField("body", "java", "doc-1", 2, 4);
+
+        assertThatThrownBy(() -> index.getPostingListByTerm("body", "missing"))
+                .isInstanceOf(TermNotFoundException.class)
+                .hasMessage("Term not found in inverted index: field body, term missing");
     }
 }
