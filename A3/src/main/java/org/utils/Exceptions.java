@@ -51,4 +51,12 @@ public final class Exceptions {
             super(message);
         }
     }
+
+    public static class UnsupportedScoringAlgorithmException extends RuntimeException {
+        public UnsupportedScoringAlgorithmException(String message) {
+            super(message);
+        }
+    }
+
+
 }
