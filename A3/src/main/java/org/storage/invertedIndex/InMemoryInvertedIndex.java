@@ -1,28 +1,36 @@
 package org.storage.invertedIndex;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 public class InMemoryInvertedIndex implements InvertedIndex {
     @Getter
     private Map<String, Map<String, PostingList>> index = new HashMap<>();
 
     public void addField(String fieldName, String token, String docId, int position, int docLength) {
+        log.debug("Adding field to inverted index: field {}, token {}, docId {}, position {}", fieldName, token, docId, position);
         addTerm(fieldName, token, docId, position, docLength);
     }
 
     public void addTerm(String fieldName, String token, String docId, int position, int docLength) {
-        index.putIfAbsent(fieldName, new HashMap<>());
+        if (!index.containsKey(fieldName)) {
+            log.debug("Creating new field entry in inverted index: field {}", fieldName);
+            index.put(fieldName, new HashMap<>());
+        }
         Map<String, PostingList> fieldEntry = index.get(fieldName);
         if (!fieldEntry.containsKey(token)) {
+            log.debug("Creating new posting list: field {}, token {}, docId {}", fieldName, token, docId);
             Map<String, TermStats> postings = new HashMap<>();
             postings.put(docId, new TermStats(1.0 / docLength, new ArrayList<>(List.of(position))));
             fieldEntry.put(token, new PostingList(postings));
         } else {
+            log.debug("Updating posting list: field {}, token {}, docId {}", fieldName, token, docId);
             addDoc(fieldEntry, token, docId, position, docLength);
         }
 
@@ -33,15 +41,26 @@ public class InMemoryInvertedIndex implements InvertedIndex {
         //if doc is already exist
         //improve time running with the list - for thinking if sorted list is needed
         if (tokenEntry.containsKey(docId)) {
+            log.debug("Updating term stats for existing document: token {}, docId {}, position {}", token, docId, position);
             tokenEntry.get(docId).incrementTf(1.0 / docLength);
             tokenEntry.get(docId).getPositions().add(position);
-        } else
+        } else {
+            log.debug("Adding document to posting list: token {}, docId {}, position {}", token, docId, position);
             tokenEntry.put(docId, new TermStats(1.0 / docLength, new ArrayList<>(List.of(position))));
+        }
     }
     public PostingList getPostingListByTerm(String fieldName, String term){
-
+        if (!index.containsKey(fieldName)) {
+            log.warn("Posting list lookup failed because field was not found: field {}", fieldName);
+        } else if (!index.get(fieldName).containsKey(term)) {
+            log.warn("Posting list lookup failed because term was not found: field {}, term {}", fieldName, term);
+        }
         return index.get(fieldName).get(term);
     }
     public Map<String,PostingList> getPostings(String fieldName){
-        return index.get(fieldName); }
+        Map<String, PostingList> postings = index.get(fieldName);
+        if (postings == null) {
+            log.warn("Postings lookup failed because field was not found: field {}", fieldName);
+        }
+        return postings; }
 }
