@@ -26,7 +26,7 @@ public class WhitespaceTokenizer implements Tokenizer {
         for (int i = 0; i < input.length(); i++) {
             char c = input.charAt(i);
             if (Character.isWhitespace(c)) {
-                if (sb.length() > 0) {
+                if (!sb.isEmpty()) {
                     tokens.add(new Token(sb.toString(), position++));
                     sb.setLength(0);
                 }
@@ -34,7 +34,7 @@ public class WhitespaceTokenizer implements Tokenizer {
                 sb.append(c);
             }
         }
-        if (sb.length() > 0) {
+        if (!sb.isEmpty()) {
             tokens.add( new Token(sb.toString(), position));
         }
         log.debug("Whitespace tokenization completed: tokenCount {}", tokens.size());

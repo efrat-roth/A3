@@ -21,7 +21,7 @@ public class Analyzer {
     public List<Token> analyze(String input) throws IOException {
         validate(input);
         log.debug("Starting analysis: inputLength {}, charFilterCount {}, tokenFilterCount {}",
-                input.length(),charFilters.size(),tokenFilters.size());
+                input.length(), charFilters.size(), tokenFilters.size());
 
         for (CharFilter charFilter : charFilters) {
             input = charFilter.apply(input);
@@ -41,7 +41,7 @@ public class Analyzer {
     private void validate(String input) {
 
         if (input == null) {
-            throw new Exceptions.InvalidDocumentException( "Input text cannot be null");
+            throw new Exceptions.InvalidDocumentException("Input text cannot be null");
         }
 
         if (tokenizer == null) {
