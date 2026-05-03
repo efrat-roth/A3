@@ -5,6 +5,7 @@ import org.analyzing.analyzerStrategy.AnalyzerStrategyFactory;
 import org.analyzing.analyzerStrategy.DefaultAnalyzerStrategy;
 import org.analyzing.analyzerStrategy.FieldBasedAnalyzerStrategy;
 import org.junit.jupiter.api.Test;
+import org.utils.ConfigLoader;
 import org.utils.config.AppConfig;
 
 import java.io.IOException;
@@ -13,7 +14,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class AnalyzerStrategyFactoryTest {
-    AppConfig appConfig = new AppConfig();
+    AppConfig appConfig = ConfigLoader.load();
+
+    public AnalyzerStrategyFactoryTest() throws IOException {
+    }
+
     @Test
     void getShouldReturnDefaultAnalyzerStrategyForDefaultName() throws IOException {
 
