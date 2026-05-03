@@ -5,15 +5,19 @@ import org.analyzing.analyzerStrategy.AnalyzerStrategyFactory;
 import org.analyzing.analyzerStrategy.DefaultAnalyzerStrategy;
 import org.analyzing.analyzerStrategy.FieldBasedAnalyzerStrategy;
 import org.junit.jupiter.api.Test;
+import org.utils.config.AppConfig;
+
+import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class AnalyzerStrategyFactoryTest {
-
+    AppConfig appConfig = new AppConfig();
     @Test
-    void getShouldReturnDefaultAnalyzerStrategyForDefaultName() {
-        AnalyzerStrategyFactory factory = new AnalyzerStrategyFactory();
+    void getShouldReturnDefaultAnalyzerStrategyForDefaultName() throws IOException {
+
+        AnalyzerStrategyFactory factory = new AnalyzerStrategyFactory(appConfig);
 
         AnalyzerStrategy strategy = factory.get("default");
 
@@ -21,8 +25,8 @@ public class AnalyzerStrategyFactoryTest {
     }
 
     @Test
-    void getShouldReturnFieldBasedAnalyzerStrategyForFieldBasedName() {
-        AnalyzerStrategyFactory factory = new AnalyzerStrategyFactory();
+    void getShouldReturnFieldBasedAnalyzerStrategyForFieldBasedName() throws IOException {
+        AnalyzerStrategyFactory factory = new AnalyzerStrategyFactory(appConfig);
 
         AnalyzerStrategy strategy = factory.get("fieldBased");
 
@@ -30,8 +34,8 @@ public class AnalyzerStrategyFactoryTest {
     }
 
     @Test
-    void getShouldReturnNewStrategyInstanceEachTime() {
-        AnalyzerStrategyFactory factory = new AnalyzerStrategyFactory();
+    void getShouldReturnNewStrategyInstanceEachTime() throws IOException {
+        AnalyzerStrategyFactory factory = new AnalyzerStrategyFactory(appConfig);
 
         AnalyzerStrategy firstStrategy = factory.get("default");
         AnalyzerStrategy secondStrategy = factory.get("default");
@@ -40,8 +44,8 @@ public class AnalyzerStrategyFactoryTest {
     }
 
     @Test
-    void getShouldThrowNullPointerExceptionForUnknownStrategyName() {
-        AnalyzerStrategyFactory factory = new AnalyzerStrategyFactory();
+    void getShouldThrowNullPointerExceptionForUnknownStrategyName() throws IOException {
+        AnalyzerStrategyFactory factory = new AnalyzerStrategyFactory(appConfig);
 
         assertThatThrownBy(() -> factory.get("unknown"))
                 .isInstanceOf(NullPointerException.class);
