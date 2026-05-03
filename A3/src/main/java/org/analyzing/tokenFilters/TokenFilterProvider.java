@@ -16,7 +16,7 @@ public class TokenFilterProvider {
     private final TokenFilterRegistry tokenFilterRegistry;
 
     public TokenFilterProvider(AppConfig config) throws IOException {
-        String stopwordsFilePath = config.storageConfig.getStopwordsFilePath();
+        String stopwordsFilePath = config.storage.getStopwordsFilePath();
         tokenFilterRegistry = new TokenFilterRegistry(new HashSet<>(FileReader.readFileLines(stopwordsFilePath)));
     }
 

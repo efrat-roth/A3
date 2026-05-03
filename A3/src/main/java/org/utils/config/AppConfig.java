@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AppConfig {
-    public StorageConfig storageConfig;
-    public AnalyzerConfig analyzerConfig;
-    public IndexConfig indexConfig;
+    public StorageConfig storage;
+    public AnalyzerConfig analyzer;
+    public IndexConfig index;
 }

@@ -1,6 +1,6 @@
 storage:
   type: inMemory
-  stopwordsFilePath: ./data/stopwords
+  stopwordsFilePath: src/main/data/stopwords.txt
 
 index:
   maxResults: 100
@@ -9,7 +9,7 @@ index:
 analyzer:
   strategy: default
 
-  default:
+  analyzerDefinition:
     charFilters:
       - lowercase
       - punctuation

@@ -16,7 +16,7 @@ public class AnalyzerProvider {
 
     public AnalyzerStrategy provide() throws IOException {
 
-        return analyzerStrategyFactory.get(config.analyzerConfig.getStrategy());
+        return analyzerStrategyFactory.get(config.analyzer.getStrategy());
 
     }
 

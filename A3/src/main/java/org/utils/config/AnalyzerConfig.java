@@ -7,6 +7,6 @@ import java.util.Map;
 @Data
 public class AnalyzerConfig {
     private String strategy;
-    private AnalyzerDefinition defaultConfig;
+    private AnalyzerDefinition analyzerDefinition;
     private Map<String, AnalyzerDefinition> fields;
 }

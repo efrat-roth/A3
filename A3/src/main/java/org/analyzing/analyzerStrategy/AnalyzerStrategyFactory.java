@@ -44,14 +44,14 @@ public class AnalyzerStrategyFactory {
     private void buildAnalyzers(AppConfig config) throws IOException {
         AnalyzerDefinition analyzerDefinition;
 
-        if ("default".equals(config.analyzerConfig.getStrategy())) {
-            analyzerDefinition = config.analyzerConfig.getDefaultConfig();
+        if ("default".equals(config.analyzer.getStrategy())) {
+            analyzerDefinition = config.analyzer.getAnalyzerDefinition();
             analyzers.put("default", new DefaultAnalyzerStrategy(buildAnalyzer(analyzerDefinition)));
         }
 
-        if ("fieldBased".equals(config.analyzerConfig.getStrategy())) {
+        if ("fieldBased".equals(config.analyzer.getStrategy())) {
             Map<String, Analyzer> analyzersFields = new HashMap<>();
-            Map<String, AnalyzerDefinition> fieldsAnalyzers = config.analyzerConfig.getFields();
+            Map<String, AnalyzerDefinition> fieldsAnalyzers = config.analyzer.getFields();
             for (Map.Entry<String, AnalyzerDefinition> entry : fieldsAnalyzers.entrySet()) {
                 analyzerDefinition = entry.getValue();
                 analyzersFields.put(entry.getKey(), buildAnalyzer(analyzerDefinition));
