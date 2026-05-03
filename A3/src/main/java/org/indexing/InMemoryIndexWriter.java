@@ -25,41 +25,43 @@ public class InMemoryIndexWriter implements IndexWriter {
         int docLength = document.stream().mapToInt(Field::getLength).sum();
 
         log.info("Adding document to in-memory index: docId {}, fieldCount {}, docLength {}",
-                docId,document.size(),docLength);
+                docId, document.size(), docLength);
 
         try {
-            Map<Field, List<Token>> analyzedFields =analyzeDocument(document, docId);
+            List<Field> analyzedFields = analyzeDocument(document, docId);
             writeToIndex(analyzedFields, docId, docLength);
             indexStorage.addDocument(docId, document);
-            log.info("Document added to in-memory index: docId {}",docId);
+            log.info("Document added to in-memory index: docId {}", docId);
 
         } catch (IOException e) {
             log.error("Failed indexing document: docId {}", docId, e);
 
-            throw new Exceptions.IndexingException("Failed to index document: " + docId,e);
+            throw new Exceptions.IndexingException("Failed to index document: " + docId, e);
         }
     }
 
-    private Map<Field, List<Token>> analyzeDocument(List<Field> document, String docId) throws IOException {
-        Map<Field, List<Token>> analyzed = new HashMap<>();
+    private List<Field> analyzeDocument(List<Field> document, String docId) throws IOException {
+        List<Field> analyzed = new ArrayList<>();
         for (Field field : document) {
             if (!field.isIndexed()) {
                 continue;
             }
-            log.debug("Analyzing field: docId {}, field {}",docId,field.getFieldName());
+            log.debug("Analyzing field: docId {}, field {}", docId, field.getFieldName());
 
             List<Token> tokens = analyzerStrategy.getAnalyzer(field.getFieldName()).analyze(field.getContent());
-            analyzed.put(field, tokens);
-            log.debug("Field analyzed: docId {}, field {}, tokenCount {}",docId,field.getFieldName(),tokens.size());
+            field.setValues(tokens);
+            analyzed.add(field);
+            log.debug("Field analyzed: docId {}, field {}, tokenCount {}", docId, field.getFieldName(), tokens.size());
         }
         return analyzed;
     }
 
-    private void writeToIndex( Map<Field, List<Token>> analyzedFields,String docId,int docLength) {
-        analyzedFields.forEach((field, tokens) -> {
-            tokens.forEach(token ->
+    private void writeToIndex(List<Field> analyzedFields, String docId, int docLength) {
+        analyzedFields.forEach(field -> {
+            field.getValues().forEach(token ->
                     indexStorage.getInvertedIndex().addField(
-                            field.getFieldName(),token.term(),docId,token.position(),docLength));});
+                            field.getFieldName(), token.term(), docId, token.position(), docLength));
+        });
     }
 
     private void validateDocument(List<Field> document) {
@@ -72,7 +74,7 @@ public class InMemoryIndexWriter implements IndexWriter {
         }
 
         boolean hasInvalidField = document.stream().anyMatch(field ->
-                field == null ||field.getFieldName() == null ||field.getFieldName().isBlank());
+                field == null || field.getFieldName() == null || field.getFieldName().isBlank());
 
         if (hasInvalidField) {
             throw new Exceptions.InvalidFieldException("Document contains invalid field");

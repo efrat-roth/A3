@@ -1,5 +1,8 @@
-"and",
-"or",
-"is",
-"are",
-"am"
+is
+are
+am
+and
+or
+a
+an
+to

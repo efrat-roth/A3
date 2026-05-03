@@ -8,6 +8,7 @@ import org.analyzing.analyzerStrategy.AnalyzerStrategy;
 import org.reading.IndexReader;
 import org.scoring.ScoreResult;
 import org.scoring.calculation.ScoreCalculator;
+import org.storage.Field;
 import org.storage.invertedIndex.PostingList;
 import org.utils.Exceptions;
 
@@ -29,22 +30,25 @@ public class QueryProcessor {
         log.debug("Finding matching documents for query conditions: fieldCount {}", conditions.size());
         Set<String> matchDocs = new TreeSet<>();
         for (String fieldName : conditions.keySet()) {
+
             log.debug("Analyzing query condition for field: {}", fieldName);
-            List<Token> queryFieldTokens = analyzer.getAnalyzer(fieldName)
-                    .analyze(conditions.get(fieldName));
+
+            List<Token> queryFieldTokens = analyzer.getAnalyzer(fieldName).analyze(conditions.get(fieldName));
+
             log.debug("Query field analyzed: field {}, tokenCount {}", fieldName, queryFieldTokens.size());
 
             Map<String, PostingList> postingsTerms = indexReader.getPosting(fieldName);
             if (postingsTerms == null) {
                 log.warn("Skipping field because postings were not found: field {}", fieldName);
             }
+            assert postingsTerms != null;
             Map<String, PostingList> postingsTermsInQuery = postingsTerms.entrySet().stream()
                     .filter(entry -> queryFieldTokens.stream().anyMatch(token ->
                             entry.getKey().equals(token.term())))
                     .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
             log.debug("Postings matched query tokens: field {}, matchedTermCount {}", fieldName, postingsTermsInQuery.size());
 
-            matchDocs.addAll(new HashSet(postingsTermsInQuery.values().stream()
+            matchDocs.addAll(new HashSet<>(postingsTermsInQuery.values().stream()
                     .map(entry -> entry.getPostings().keySet())
                     .flatMap(Set::stream)
                     .collect(Collectors.toSet())));
@@ -66,9 +70,12 @@ public class QueryProcessor {
             Set<String> matchDocs = findDocsOfField(conditions);
 
             Map<String, List<String>> fieldsTokensQuery = buildQueryTokens(query, conditions);
-
-            matchDocs.forEach(doc -> results.add(scoreCalculator.calculateScores(
-                    indexReader.buildContext(doc, fieldsTokensQuery))));
+            matchDocs.forEach(doc -> {
+                results.add(scoreCalculator.calculateScores(
+                        indexReader.buildContext(doc, indexReader.getDocument(doc).stream()
+                                .collect(Collectors.toMap(Field::getFieldName, field->
+                                        field.getValues().stream().map(Token::term).toList())))));
+            });
 
             log.info("Query processed: queryId {}, matchedDocs {}, results {}",
                     query.getQueryId(), matchDocs.size(), results.size());

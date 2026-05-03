@@ -2,6 +2,7 @@ package org.reading;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.storage.Field;
 import org.storage.IndexStorage;
 import org.storage.invertedIndex.PostingList;
 import org.storage.invertedIndex.TermStats;
@@ -25,9 +26,9 @@ public class InMemoryIndexReader implements IndexReader {
         Map<String, PostingList> postings = indexStorage.getInvertedIndex().getPostings(fieldName);
         if (postings == null) {
             log.warn("No postings found for field: {}", fieldName);
-            throw new Exceptions.FieldNotFoundException( "Field not found in index: " + fieldName);
+            throw new Exceptions.FieldNotFoundException("Field not found in index: " + fieldName);
         }
-        log.debug("Postings retrieved for field: {}, termCount {}",fieldName,postings.size());
+        log.debug("Postings retrieved for field: {}, termCount {}", fieldName, postings.size());
         return postings;
     }
 
@@ -35,12 +36,12 @@ public class InMemoryIndexReader implements IndexReader {
     public QueryContext buildContext(String docId, Map<String, List<String>> queryTermsByFields) {
         validateBuildContextInput(docId, queryTermsByFields);
 
-        log.debug("Building query context: docId {}, fieldCount {}",docId,queryTermsByFields.size());
+        log.debug("Building query context: docId {}, fieldCount {}", docId, queryTermsByFields.size());
 
         List<TermStats> termStatsOfDoc = new ArrayList<>();
         Map<String, Integer> termDocumentFrequency = new HashMap<>();
 
-        for (Map.Entry<String, List<String>> fieldEntry :queryTermsByFields.entrySet()) {
+        for (Map.Entry<String, List<String>> fieldEntry : queryTermsByFields.entrySet()) {
             String fieldName = fieldEntry.getKey();
             List<String> terms = fieldEntry.getValue();
             validateFieldName(fieldName);
@@ -52,7 +53,7 @@ public class InMemoryIndexReader implements IndexReader {
                 }
                 TermStats stats = postingList.getPostings().get(docId);
                 if (stats == null) {
-                    throw new Exceptions.DocumentNotFoundException("Document " + docId +" not found for term: " + term);
+                    throw new Exceptions.DocumentNotFoundException("Document " + docId + " not found for term: " + term);
                 }
                 termStatsOfDoc.add(stats);
 
@@ -63,13 +64,18 @@ public class InMemoryIndexReader implements IndexReader {
         int totalDocs = indexStorage.getDocuments().size();
 
         if (totalDocs <= 0) {
-            throw new Exceptions.InvalidIndexEntryException( "Index contains no documents");
+            throw new Exceptions.InvalidIndexEntryException("Index contains no documents");
         }
 
         log.info("Query context built: docId {}, termStatsCount {}, termsDfCount {}, totalDocs {}",
-                docId,termStatsOfDoc.size(), termDocumentFrequency.size(), totalDocs);
+                docId, termStatsOfDoc.size(), termDocumentFrequency.size(), totalDocs);
 
         return new QueryContext(docId, termStatsOfDoc, termDocumentFrequency, totalDocs);
+    }
+
+    @Override
+    public List<Field> getDocument(String docId) {
+        return indexStorage.getDocument(docId);
     }
 
     private void validateFieldName(String fieldName) {

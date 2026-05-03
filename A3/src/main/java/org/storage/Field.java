@@ -2,11 +2,12 @@ package org.storage;
 
 import lombok.Data;
 import lombok.NonNull;
+import org.analyzing.Token;
 import org.utils.Exceptions.InvalidFieldException;
 
 import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Data
@@ -20,7 +21,7 @@ public class Field {
     private final boolean indexed;
     private final String content;
     //term and position
-    private Map<String, Integer> values= new HashMap<>();
+    private List<Token> values= new ArrayList<>();
 
     public Field(String fieldName, Type fieldType, int length, boolean stored, boolean indexed, String content) {
         if (fieldName == null) {

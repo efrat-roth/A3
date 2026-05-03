@@ -61,7 +61,7 @@ public class Main {
              * ============================
              */
 
-            String content1 = "Java Search Engine";
+            String content1 = "Java, Search Engine.";
             String content2 = "Java is a powerful language for building search engine";
             List<Field> document = List.of(
                     new Field(
@@ -84,7 +84,29 @@ public class Main {
 
             writer.addDocument(document);
 
-            System.out.println("Document indexed successfully.");
+            String content3 = "All or Nothing";
+            String content4 = "Is knowing the all details good?";
+            List<Field> document2 = List.of(
+                    new Field(
+                            "title",
+                            String.class,
+                            content3.length(),
+                            true,
+                            false,
+                            content3
+                    ),
+                    new Field(
+                            "body",
+                            String.class,
+                            content4.length(),
+                            true,
+                            true,
+                            content4
+                    )
+            );
+
+            writer.addDocument(document2);
+
 
             /*
              * ============================
@@ -94,8 +116,6 @@ public class Main {
 
             InMemoryIndexReader reader =
                     new InMemoryIndexReader(indexStorage);
-            System.out.println( reader.getPosting("body"));
-            System.out.println(reader.getPosting("title"));
 
             /*
              * ============================
