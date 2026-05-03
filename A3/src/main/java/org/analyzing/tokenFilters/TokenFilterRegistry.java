@@ -11,6 +11,7 @@ public class TokenFilterRegistry {
     private final Map<String, TokenFilter> filters = new HashMap<>();
 
     public TokenFilterRegistry(Set<String> stopwords) {
+
         filters.put("stopwords", new StopwordsTokenFilter(stopwords));
     }
 
