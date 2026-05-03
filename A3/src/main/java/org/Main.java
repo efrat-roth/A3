@@ -62,7 +62,7 @@ public class Main {
              */
 
             String content1 = "Java Search Engine";
-            String content2 = "Java is a powerful language for building search engines";
+            String content2 = "Java is a powerful language for building search engine";
             List<Field> document = List.of(
                     new Field(
                             "title",
@@ -94,6 +94,8 @@ public class Main {
 
             InMemoryIndexReader reader =
                     new InMemoryIndexReader(indexStorage);
+            System.out.println( reader.getPosting("body"));
+            System.out.println(reader.getPosting("title"));
 
             /*
              * ============================
