@@ -92,7 +92,7 @@ public class Main {
                             String.class,
                             content3.length(),
                             true,
-                            false,
+                            true,
                             content3
                     ),
                     new Field(
@@ -139,8 +139,8 @@ public class Main {
             Query query = new Query(
                     UUID.randomUUID().toString(),
                     java.util.Map.of(
-                            "title", "java",
-                            "body", "search engine"
+                            "title", "all",
+                            "body", "java"
                     ),
                     10,
                     0,

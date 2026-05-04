@@ -43,20 +43,21 @@ public class InMemoryIndexReader implements IndexReader {
 
         for (Map.Entry<String, List<String>> fieldEntry : queryTermsByFields.entrySet()) {
             String fieldName = fieldEntry.getKey();
-            List<String> terms = fieldEntry.getValue();
             validateFieldName(fieldName);
 
-            for (String term : terms) {
-                PostingList postingList = indexStorage.getInvertedIndex().getPostingListByTerm(fieldName, term);
-                if (postingList == null) {
-                    throw new Exceptions.TermNotFoundException("Term not found: " + term + " in field: " + fieldName);
+            for (String term : fieldEntry.getValue()) {
+
+                PostingList postingList;
+                try {
+                    postingList = indexStorage.getInvertedIndex().getPostingListByTerm(fieldName, term);
+                } catch (Exceptions.TermNotFoundException e) {
+                    log.debug("Skipping missing term: field {}, term {}", fieldName, term);
+                    continue;
                 }
                 TermStats stats = postingList.getPostings().get(docId);
-                if (stats == null) {
-                    throw new Exceptions.DocumentNotFoundException("Document " + docId + " not found for term: " + term);
+                if (stats != null) {
+                    termStatsOfDoc.add(stats);
                 }
-                termStatsOfDoc.add(stats);
-
                 termDocumentFrequency.put(term, postingList.getPostings().size());
             }
         }

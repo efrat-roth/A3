@@ -26,14 +26,14 @@ public class QueryProcessor {
     @NonNull
     private ScoreCalculator scoreCalculator;
 
-    private Set<String> findDocsOfField(Map<String, String> conditions) throws IOException {
-        log.debug("Finding matching documents for query conditions: fieldCount {}", conditions.size());
+    private Set<String> findDocsOfField(Map<String, List<String>> conditionsQuery) throws IOException {
+        log.debug("Finding matching documents for query conditions: fieldCount {}", conditionsQuery.size());
         Set<String> matchDocs = new TreeSet<>();
-        for (String fieldName : conditions.keySet()) {
+        for (String fieldName : conditionsQuery.keySet()) {
 
             log.debug("Analyzing query condition for field: {}", fieldName);
 
-            List<Token> queryFieldTokens = analyzer.getAnalyzer(fieldName).analyze(conditions.get(fieldName));
+            List<String> queryFieldTokens = conditionsQuery.get(fieldName);
 
             log.debug("Query field analyzed: field {}, tokenCount {}", fieldName, queryFieldTokens.size());
 
@@ -43,8 +43,8 @@ public class QueryProcessor {
             }
             assert postingsTerms != null;
             Map<String, PostingList> postingsTermsInQuery = postingsTerms.entrySet().stream()
-                    .filter(entry -> queryFieldTokens.stream().anyMatch(token ->
-                            entry.getKey().equals(token.term())))
+                    .filter(entry -> queryFieldTokens.stream().anyMatch(term ->
+                            entry.getKey().equals(term)))
                     .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
             log.debug("Postings matched query tokens: field {}, matchedTermCount {}", fieldName, postingsTermsInQuery.size());
 
@@ -67,14 +67,12 @@ public class QueryProcessor {
             Map<String, String> conditions = query.getConditions();
             List<ScoreResult> results = new ArrayList<>();
 
-            Set<String> matchDocs = findDocsOfField(conditions);
+            Map<String, List<String>> queryTermsByField = buildQueryTerms(conditions);
+            Set<String> matchDocs = findDocsOfField(queryTermsByField);
 
-            Map<String, List<String>> fieldsTokensQuery = buildQueryTokens(query, conditions);
             matchDocs.forEach(doc -> {
                 results.add(scoreCalculator.calculateScores(
-                        indexReader.buildContext(doc, indexReader.getDocument(doc).stream()
-                                .collect(Collectors.toMap(Field::getFieldName, field->
-                                        field.getValues().stream().map(Token::term).toList())))));
+                        indexReader.buildContext(doc, queryTermsByField)));
             });
 
             log.info("Query processed: queryId {}, matchedDocs {}, results {}",
@@ -90,11 +88,6 @@ public class QueryProcessor {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private Map<String, List<String>> buildQueryTokens(Query query, Map<String, String> conditions) {
-        return conditions.keySet().stream()
-                .collect(Collectors.toMap(field -> field, field -> analyzeField(query, field)));
     }
 
     private List<String> analyzeField(Query query, String fieldName) {
@@ -117,5 +110,22 @@ public class QueryProcessor {
         if (query.getConditions() == null || query.getConditions().isEmpty()) {
             throw new Exceptions.InvalidQueryException("Query conditions cannot be empty");
         }
+    }
+    private Map<String, List<String>> buildQueryTerms(Map<String, String> conditions) throws IOException {
+
+        Map<String, List<String>> queryTerms = new HashMap<>();
+
+        for (Map.Entry<String, String> entry : conditions.entrySet()) {
+
+            String fieldName = entry.getKey();
+            String rawQuery = entry.getValue();
+
+            List<String> terms = analyzer.getAnalyzer(fieldName).analyze(rawQuery)
+                    .stream().map(Token::term).toList();
+
+            queryTerms.put(fieldName, terms);
+        }
+
+        return queryTerms;
     }
 }

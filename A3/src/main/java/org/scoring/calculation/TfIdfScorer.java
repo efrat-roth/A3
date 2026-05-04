@@ -22,6 +22,7 @@ public class TfIdfScorer implements ScoreCalculator {
         double idf = context.getTermsDf().values().stream()
                 .mapToDouble(df -> Math.log(context.getDocsCount() / (double) df)).sum();
 
+
         double totalScore = tf * idf;
 
         log.debug("TF-IDF score calculated: docId {}, tf {}, idf {}, totalScore {}", context.getDocId(), tf, idf, totalScore);
