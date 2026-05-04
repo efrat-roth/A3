@@ -1,16 +1,12 @@
 package org;
 
 import org.analyzing.analyzerStrategy.AnalyzerProvider;
-import org.analyzing.analyzerStrategy.AnalyzerStrategy;
 import org.indexing.InMemoryIndexWriter;
 import org.quering.Query;
 import org.quering.QueryProcessor;
 import org.quering.QueryType;
 import org.reading.InMemoryIndexReader;
-import org.scoring.ScoreResult;
 import org.scoring.calculation.ScoreProvider;
-import org.scoring.calculation.ScoreRegistry;
-import org.scoring.calculation.TfIdfScorer;
 import org.storage.Field;
 import org.storage.IndexStorage;
 import org.storage.invertedIndex.InMemoryInvertedIndex;
@@ -19,6 +15,7 @@ import org.utils.ConfigLoader;
 import org.utils.config.AppConfig;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public class Main {
@@ -29,42 +26,24 @@ public class Main {
             AppConfig appConfig = ConfigLoader.load();
 
 
-            /*
-             * ============================
-             * 1. Build Analyzer
-             * ============================
-             */
+            // 1. Build Analyzer
             AnalyzerProvider analyzerProvider = new AnalyzerProvider(appConfig);
-            AnalyzerStrategy analyzerStrategy = analyzerProvider.provide();
 
-            /*
-             * ============================
-             * 2. Build Storage
-             * ============================
-             */
+            // 2. Build Storage
             InvertedIndex invertedIndex = new InMemoryInvertedIndex();
             IndexStorage indexStorage = new IndexStorage(invertedIndex);
 
-            /*
-             * ============================
-             * 3. Build Writer
-             * ============================
-             */
-
+            // 3. Build Writer
             InMemoryIndexWriter writer =
                     new InMemoryIndexWriter(
-                            analyzerStrategy,
+                            analyzerProvider.provide(),
                             indexStorage
                     );
 
-            /*
-             * ============================
-             * 4. Index Document
-             * ============================
-             */
 
+            // 4. Index Document
             String content1 = "Java, Search Engine.";
-            String content2 = "Java is a powerful language for building search engine";
+            String content2 = "Java is a @powerful language for building search engine";
             List<Field> document = List.of(
                     new Field(
                             "title",
@@ -110,34 +89,21 @@ public class Main {
             writer.addDocument(document2);
 
 
-            /*
-             * ============================
-             * 5. Build Reader
-             * ============================
-             */
-
+            // 5. Build Reader
             InMemoryIndexReader reader =
                     new InMemoryIndexReader(indexStorage);
 
-            /*
-             * ============================
-             * 6. Build Query Processor
-             * ============================
-             */
+            // 6. Build Query Processor
             ScoreProvider scoreProvider = new ScoreProvider(appConfig);
             QueryProcessor processor =
                     new QueryProcessor(
-                            analyzerStrategy,
+                            analyzerProvider.provide(),
                             reader,
                             scoreProvider.provide()
                     );
 
-            /*
-             * ============================
-             * 7. Build Query
-             * ============================
-             */
 
+            // 7. Build Query
             Query query = new Query(
                     UUID.randomUUID().toString(),
                     java.util.Map.of(
@@ -149,31 +115,28 @@ public class Main {
                     QueryType.OR
             );
 
-            /*
-             * ============================
-             * 8. Execute Query
-             * ============================
-             */
 
-            List<ScoreResult> results =
-                    processor.process(query);
+            // 8. Execute Query
+            Map<String, Map<List<Field>, Double>> results = processor.process(query);
 
-            /*
-             * ============================
-             * 9. Print Results
-             * ============================
-             */
-
+            // 9. Print Results
             System.out.println("\nSearch Results:");
 
-            for (ScoreResult result : results) {
-                System.out.println(
-                        "DocId: " + result.docId()
-                                + ", Score: " + result.totalScore()
-                );
+            for (Map.Entry<String, Map<List<Field>, Double>> entry : results.entrySet()) {
+
+                System.out.println("Doc id: " + entry.getKey());
+
+                for (Map.Entry<List<Field>, Double> docDetails : entry.getValue().entrySet()) {
+
+                    System.out.println("Score: " + docDetails.getValue());
+                    System.out.println("Doc fields:");
+
+                    for (Field field : docDetails.getKey()) {
+                        System.out.println("\t" + field.getFieldName() + ": " + field.getContent());
+                    }
+                }
             }
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

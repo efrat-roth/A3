@@ -8,6 +8,7 @@ import org.analyzing.analyzerStrategy.AnalyzerStrategy;
 import org.reading.IndexReader;
 import org.scoring.ScoreResult;
 import org.scoring.calculation.ScoreCalculator;
+import org.storage.Field;
 import org.storage.invertedIndex.PostingList;
 import org.utils.Exceptions;
 
@@ -56,7 +57,7 @@ public class QueryProcessor {
         return matchDocs;
     }
 
-    public List<ScoreResult> process(Query query) {
+    public Map<String, Map<List<Field>, Double>> process(Query query) {
 
         validateQuery(query);
         try {
@@ -77,9 +78,13 @@ public class QueryProcessor {
             log.info("Query processed: queryId {}, matchedDocs {}, results {}",
                     query.getQueryId(), matchDocs.size(), results.size());
 
-            return results.stream().sorted(Comparator.comparingDouble(ScoreResult::totalScore).reversed())
-                    .skip(query.getStart()).limit(query.getLimit()).toList();
+            List<ScoreResult> resultDocs =  results.stream().sorted(Comparator.comparingDouble(ScoreResult::totalScore)
+                            .reversed()).skip(query.getStart()).limit(query.getLimit()).toList();
 
+            return resultDocs.stream().collect(Collectors.toMap(
+                            ScoreResult::docId,
+                            scoreResult -> Map.of(
+                                    indexReader.getDocument(scoreResult.docId()),scoreResult.totalScore())));
         } catch (RuntimeException e) {
             log.error("Query processing failed: queryId {}", query.getQueryId(), e);
 

@@ -20,7 +20,7 @@ public class Field {
     private final boolean stored;
     private final boolean indexed;
     private final String content;
-    private List<Token> values= new ArrayList<>();
+    private List<Token> values = new ArrayList<>();
 
     public Field(String fieldName, Type fieldType, int length, boolean stored, boolean indexed, String content) {
         if (fieldName == null) {

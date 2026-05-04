@@ -13,7 +13,7 @@ public class ScoreRegistry {
     private final Map<String, Supplier<ScoreCalculator>> scorers = new HashMap<>();
 
     public ScoreRegistry() {
-        scorers.put("tfidf", TfIdfScorer::new);
+        scorers.put("tfIdf", TfIdfScorer::new);
         log.debug("Registered scorers: {}", scorers.keySet());
     }
 
