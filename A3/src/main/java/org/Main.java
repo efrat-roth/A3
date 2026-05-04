@@ -107,8 +107,8 @@ public class Main {
             Query query = new Query(
                     UUID.randomUUID().toString(),
                     java.util.Map.of(
-                            "title", "all",
-                            "body", "java"
+                            "title", "@",
+                            "body", "@"
                     ),
                     10,
                     0,

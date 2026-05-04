@@ -28,7 +28,7 @@ public class QueryProcessor {
 
     private Set<String> findDocsOfField(Map<String, List<String>> conditionsQuery) throws IOException {
         log.debug("Finding matching documents for query conditions: fieldCount {}", conditionsQuery.size());
-        Set<String> matchDocs = new TreeSet<>();
+        Set<String> matchDocs = new HashSet<>();
         for (String fieldName : conditionsQuery.keySet()) {
 
             log.debug("Analyzing query condition for field: {}", fieldName);
