@@ -9,7 +9,8 @@ import java.util.Set;
 @Slf4j
 public class PunctuationCharFilter implements CharFilter {
 
-    private static final Set<Character> DEFAULT_PUNCTUATIONS = Set.of('.', ',', ';', ':', '!', '?', '"', '\'');
+    private static final Set<Character> DEFAULT_PUNCTUATIONS =
+            Set.of('.', ',', ';', ':', '!', '?', '"', '\'', '@', '#', '$', '%', '^', '&', '*', '(', ')');
     private final Set<Character> punctuations;
 
     public PunctuationCharFilter() {

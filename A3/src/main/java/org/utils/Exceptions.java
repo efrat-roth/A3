@@ -99,4 +99,8 @@ public final class Exceptions {
         }
     }
 
+    public static class UnsupprtedFieldTypeException extends RuntimeException {
+        public UnsupprtedFieldTypeException(String message) {}
+    }
+
 }
