@@ -8,7 +8,6 @@ import org.analyzing.analyzerStrategy.AnalyzerStrategy;
 import org.reading.IndexReader;
 import org.scoring.ScoreResult;
 import org.scoring.calculation.ScoreCalculator;
-import org.storage.Field;
 import org.storage.invertedIndex.PostingList;
 import org.utils.Exceptions;
 
@@ -90,17 +89,6 @@ public class QueryProcessor {
         }
     }
 
-    private List<String> analyzeField(Query query, String fieldName) {
-
-        try {
-            return analyzer.getAnalyzer(fieldName).analyze(query.getConditions().get(fieldName)).stream()
-                    .map(Token::term).collect(Collectors.toList());
-
-        } catch (IOException e) {
-            throw new Exceptions.QueryProcessingException("Failed analyzing field: " + fieldName, e);
-        }
-    }
-
     private void validateQuery(Query query) {
 
         if (query == null) {
@@ -128,4 +116,16 @@ public class QueryProcessor {
 
         return queryTerms;
     }
+
+    //    private List<String> analyzeField(Query query, String fieldName) {
+//
+//        try {
+//            return analyzer.getAnalyzer(fieldName).analyze(query.getConditions().get(fieldName)).stream()
+//                    .map(Token::term).collect(Collectors.toList());
+//
+//        } catch (IOException e) {
+//            throw new Exceptions.QueryProcessingException("Failed analyzing field: " + fieldName, e);
+//        }
+//    }
+
 }

@@ -8,6 +8,8 @@ import org.quering.QueryProcessor;
 import org.quering.QueryType;
 import org.reading.InMemoryIndexReader;
 import org.scoring.ScoreResult;
+import org.scoring.calculation.ScoreProvider;
+import org.scoring.calculation.ScoreRegistry;
 import org.scoring.calculation.TfIdfScorer;
 import org.storage.Field;
 import org.storage.IndexStorage;
@@ -122,12 +124,12 @@ public class Main {
              * 6. Build Query Processor
              * ============================
              */
-
+            ScoreProvider scoreProvider = new ScoreProvider(appConfig);
             QueryProcessor processor =
                     new QueryProcessor(
                             analyzerStrategy,
                             reader,
-                            new TfIdfScorer()
+                            scoreProvider.provide()
                     );
 
             /*

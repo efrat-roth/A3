@@ -42,8 +42,6 @@ public class InMemoryInvertedIndex implements InvertedIndex {
 
     private void addDoc(Map<String, PostingList> fieldEntry, String token, String docId, int position, int docLength) {
         Map<String, TermStats> tokenEntry = fieldEntry.get(token).getPostings();
-        //if doc is already exist
-        //improve time running with the list - for thinking if sorted list is needed
         if (tokenEntry.containsKey(docId)) {
             log.debug("Updating term stats for existing document: token {}, docId {}, position {}", token, docId, position);
             tokenEntry.get(docId).incrementTf(1.0 / docLength);

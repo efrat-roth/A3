@@ -11,4 +11,5 @@ public class AppConfig {
     public StorageConfig storage;
     public AnalyzerConfig analyzer;
     public IndexConfig index;
+
 }
