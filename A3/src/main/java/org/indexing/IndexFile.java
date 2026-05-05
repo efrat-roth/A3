@@ -115,6 +115,12 @@ public class IndexFile {
         } catch (NumberFormatException ignored) {
         }
         try {
+            Long.parseLong(content);
+            return Long.class;
+        } catch (NumberFormatException ignored) {
+        }
+
+        try {
             Double.parseDouble(content);
             return Double.class;
 

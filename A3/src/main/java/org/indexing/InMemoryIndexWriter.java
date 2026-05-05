@@ -9,7 +9,9 @@ import org.storage.IndexStorage;
 import org.utils.Exceptions;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -47,7 +49,6 @@ public class InMemoryIndexWriter implements IndexWriter {
                 continue;
             }
             log.debug("Analyzing field: docId {}, field {}", docId, field.getFieldName());
-
             List<Token> tokens = analyzerStrategy.getAnalyzer(field.getFieldName()).analyze(field.getContent());
             field.setValues(tokens);
             analyzed.add(field);
