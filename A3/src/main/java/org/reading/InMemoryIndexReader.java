@@ -4,14 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.storage.Field;
 import org.storage.IndexStorage;
+import org.storage.invertedIndex.InvertedIndex;
 import org.storage.invertedIndex.PostingList;
 import org.storage.invertedIndex.TermStats;
 import org.utils.Exceptions;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @AllArgsConstructor
@@ -26,7 +24,7 @@ public class InMemoryIndexReader implements IndexReader {
         Map<String, PostingList> postings = indexStorage.getInvertedIndex().getPostings(fieldName);
         if (postings == null) {
             log.warn("No postings found for field: {}", fieldName);
-            throw new Exceptions.FieldNotFoundException("Field not found in index: " + fieldName);
+            return Collections.emptyMap();
         }
         log.debug("Postings retrieved for field: {}, termCount {}", fieldName, postings.size());
         return postings;
@@ -46,19 +44,19 @@ public class InMemoryIndexReader implements IndexReader {
             validateFieldName(fieldName);
 
             for (String term : fieldEntry.getValue()) {
-
-                PostingList postingList;
+                InvertedIndex inverted = indexStorage.getInvertedIndex();
+                PostingList postings;
                 try {
-                    postingList = indexStorage.getInvertedIndex().getPostingListByTerm(fieldName, term);
+                    postings = inverted.getPostingListByTerm(fieldName, term);
                 } catch (Exceptions.TermNotFoundException e) {
                     log.debug("Skipping missing term: field {}, term {}", fieldName, term);
                     continue;
                 }
-                TermStats stats = postingList.getPostings().get(docId);
+                TermStats stats = postings.getPostings().get(docId);
                 if (stats != null) {
                     termStatsOfDoc.add(stats);
                 }
-                termDocumentFrequency.put(term, postingList.getPostings().size());
+                termDocumentFrequency.computeIfAbsent(term, t -> postings.getPostings().size());
             }
         }
 
