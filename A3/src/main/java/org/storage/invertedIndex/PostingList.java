@@ -1,10 +1,10 @@
 package org.storage.invertedIndex;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @AllArgsConstructor
 public class PostingList {

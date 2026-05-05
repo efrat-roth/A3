@@ -10,8 +10,9 @@ import java.io.IOException;
 public class ConfigLoader {
 
     public static AppConfig load() throws IOException {
-        return load( "src/main/resources/application.yml");
+        return load("src/main/resources/application.yml");
     }
+
     public static AppConfig load(String path) throws IOException {
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         return mapper.readValue(new File(path), AppConfig.class);

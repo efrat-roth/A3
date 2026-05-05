@@ -44,7 +44,7 @@ public class InMemoryInvertedIndex implements InvertedIndex {
         Map<String, TermStats> tokenEntry = fieldEntry.get(token).getPostings();
         if (tokenEntry.containsKey(docId)) {
             log.debug("Updating term stats for existing document: token {}, docId {}, position {}", token, docId, position);
-            tokenEntry.get(docId).incrementTf(1.0 / docLength);
+            tokenEntry.get(docId).incrementTf(1.0);
             tokenEntry.get(docId).getPositions().add(position);
         } else {
             log.debug("Adding document to posting list: token {}, docId {}, position {}", token, docId, position);

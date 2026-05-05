@@ -10,7 +10,5 @@ import java.util.Map;
 public class QueryContext {
     private final String docId;
     private final List<TermScoreDTO> termScoreDTO;
-    //private final Map<String,TermStats> statsOfDoc;
-    //private final Map<String, Integer> termsDf;
     private final int docsCount;
 }

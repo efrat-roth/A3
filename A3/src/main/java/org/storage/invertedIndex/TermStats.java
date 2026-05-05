@@ -32,7 +32,7 @@ public class TermStats {
         this.tf = tf;
     }
 
-    public void incrementTf(double x){
+    public void incrementTf(double x) {
         if (x < 0) {
             throw new InvalidTermStatsException("Term frequency increment cannot be negative: " + x);
         }

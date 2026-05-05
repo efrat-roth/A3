@@ -81,13 +81,13 @@ public class QueryProcessor {
             log.info("Query processed: queryId {}, matchedDocs {}, results {}",
                     query.getQueryId(), matchDocs.size(), results.size());
 
-            List<ScoreResult> resultDocs =  results.stream().sorted(Comparator.comparingDouble(ScoreResult::totalScore)
-                            .reversed()).skip(query.getStart()).limit(query.getLimit()).toList();
+            List<ScoreResult> resultDocs = results.stream().sorted(Comparator.comparingDouble(ScoreResult::totalScore)
+                    .reversed()).skip(query.getStart()).limit(query.getLimit()).toList();
 
             return resultDocs.stream().collect(Collectors.toMap(
-                            ScoreResult::docId,
-                            scoreResult -> Map.of(
-                                    indexReader.getDocument(scoreResult.docId()),scoreResult.totalScore())));
+                    ScoreResult::docId,
+                    scoreResult -> Map.of(
+                            indexReader.getDocument(scoreResult.docId()), scoreResult.totalScore())));
         } catch (RuntimeException e) {
             log.error("Query processing failed: queryId {}", query.getQueryId(), e);
 
@@ -107,6 +107,7 @@ public class QueryProcessor {
             throw new Exceptions.InvalidQueryException("Query conditions cannot be empty");
         }
     }
+
     private Map<String, List<String>> buildQueryTerms(Map<String, String> conditions) throws IOException {
 
         Map<String, List<String>> queryTerms = new HashMap<>();
@@ -125,15 +126,5 @@ public class QueryProcessor {
         return queryTerms;
     }
 
-    //    private List<String> analyzeField(Query query, String fieldName) {
-//
-//        try {
-//            return analyzer.getAnalyzer(fieldName).analyze(query.getConditions().get(fieldName)).stream()
-//                    .map(Token::term).collect(Collectors.toList());
-//
-//        } catch (IOException e) {
-//            throw new Exceptions.QueryProcessingException("Failed analyzing field: " + fieldName, e);
-//        }
-//    }
 
 }

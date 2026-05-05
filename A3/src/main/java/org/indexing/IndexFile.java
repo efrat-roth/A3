@@ -129,7 +129,7 @@ public class IndexFile {
 
         log.error("Unsupported field type detected: {}", content);
 
-        throw new Exceptions.UnsupprtedFieldTypeException("Unsupported field type: " + content);
+        throw new Exceptions.UnsupportedFieldTypeException("Unsupported field type: " + content);
     }
 
     private void validatePath(String path) {

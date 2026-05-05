@@ -7,10 +7,11 @@ public interface InvertedIndex {
 
     void addField(String fieldName, String token, String docId, int position, int docLength);
 
-    void addTerm(String fieldName, String token, String docId, int position, int docLength) ;
+    void addTerm(String fieldName, String token, String docId, int position, int docLength);
 
     PostingList getPostingListByTerm(String fieldName, String term);
-    Map<String,PostingList> getPostings(String fieldName);
+
+    Map<String, PostingList> getPostings(String fieldName);
 }
 
 

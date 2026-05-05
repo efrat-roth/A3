@@ -87,6 +87,7 @@ public final class Exceptions {
             super(message);
         }
     }
+
     public static class AnalyzerConfigurationException extends RuntimeException {
         public AnalyzerConfigurationException(String message) {
             super(message);
@@ -99,8 +100,9 @@ public final class Exceptions {
         }
     }
 
-    public static class UnsupprtedFieldTypeException extends RuntimeException {
-        public UnsupprtedFieldTypeException(String message) {}
+    public static class UnsupportedFieldTypeException extends RuntimeException {
+        public UnsupportedFieldTypeException(String message) {
+        }
     }
 
 }
