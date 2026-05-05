@@ -2,8 +2,8 @@ package org.scoring.calculation;
 
 import lombok.extern.slf4j.Slf4j;
 import org.reading.QueryContext;
+import org.reading.TermScoreDTO;
 import org.scoring.ScoreResult;
-import org.storage.invertedIndex.TermStats;
 import org.utils.Exceptions;
 
 @Slf4j
@@ -14,20 +14,18 @@ public class TfIdfScorer implements ScoreCalculator {
 
         validateContext(context);
 
-        log.debug("Calculating TF-IDF score: docId {}, termStatsCount {}, termsDfCount {}, docsCount {}",
-                context.getDocId(), context.getStatsOfDoc().size(), context.getTermsDf().size(), context.getDocsCount());
+        log.debug("Calculating TF-IDF score: docId {}, TermScoreDTO {}, docsCount {}",
+                context.getDocId(), context.getTermScoreDTO().size(), context.getDocsCount());
+        double score = 0.0;
 
-        double tf = context.getStatsOfDoc().stream().mapToDouble(TermStats::getTf).sum();
+        for (TermScoreDTO entry : context.getTermScoreDTO()) {
+            double tf = entry.tf().getTf();
+            double idf = entry.idf();
+            score += tf * idf;
+        }
+        log.debug("TF-IDF score calculated: docId {},  totalScore {}", context.getDocId(), score);
 
-        double idf = context.getTermsDf().values().stream()
-                .mapToDouble(df -> Math.log(context.getDocsCount() / (double) df)).sum();
-
-
-        double totalScore = tf * idf;
-
-        log.debug("TF-IDF score calculated: docId {}, tf {}, idf {}, totalScore {}", context.getDocId(), tf, idf, totalScore);
-
-        return new ScoreResult(context.getDocId(), totalScore);
+        return new ScoreResult(context.getDocId(), score);
     }
 
     private void validateContext(QueryContext context) {
@@ -44,15 +42,11 @@ public class TfIdfScorer implements ScoreCalculator {
             throw new Exceptions.InvalidIndexEntryException("Documents count must be greater than zero");
         }
 
-        if (context.getStatsOfDoc() == null || context.getStatsOfDoc().isEmpty()) {
-            throw new Exceptions.InvalidTermStatsException("Term statistics cannot be null or empty");
+        if (context.getTermScoreDTO() == null || context.getTermScoreDTO().isEmpty()) {
+            throw new Exceptions.TermNotFoundException("No term DTO data available");
         }
 
-        if (context.getTermsDf() == null || context.getTermsDf().isEmpty()) {
-            throw new Exceptions.TermNotFoundException("No term document frequency data available");
-        }
-
-        boolean hasInvalidDf = context.getTermsDf().values().stream().anyMatch(df -> df <= 0);
+        boolean hasInvalidDf = context.getTermScoreDTO().stream().anyMatch(DTO -> DTO.idf() <= 0);
 
         if (hasInvalidDf) {
             throw new Exceptions.InvalidTermStatsException("Document frequency must be greater than zero");

@@ -36,8 +36,12 @@ public class InMemoryIndexReader implements IndexReader {
 
         log.debug("Building query context: docId {}, fieldCount {}", docId, queryTermsByFields.size());
 
-        List<TermStats> termStatsOfDoc = new ArrayList<>();
-        Map<String, Integer> termDocumentFrequency = new HashMap<>();
+        List<TermScoreDTO> termScores = new ArrayList<>();
+        int totalDocs = indexStorage.getDocuments().size();
+
+        if (totalDocs <= 0) {
+            throw new Exceptions.InvalidIndexEntryException("Index contains no documents");
+        }
 
         for (Map.Entry<String, List<String>> fieldEntry : queryTermsByFields.entrySet()) {
             String fieldName = fieldEntry.getKey();
@@ -52,24 +56,20 @@ public class InMemoryIndexReader implements IndexReader {
                     log.debug("Skipping missing term: field {}, term {}", fieldName, term);
                     continue;
                 }
+                int df = postings.getPostings().size();
+                double idf = Math.log((totalDocs + 1.0) / (df + 1.0));
+
                 TermStats stats = postings.getPostings().get(docId);
                 if (stats != null) {
-                    termStatsOfDoc.add(stats);
+                    termScores.add(new TermScoreDTO(term, stats, idf));
                 }
-                termDocumentFrequency.computeIfAbsent(term, t -> postings.getPostings().size());
+
             }
         }
+        log.info("Query context built: docId {}, termStatsCount {}, totalDocs {}",
+                docId, termScores, totalDocs);
 
-        int totalDocs = indexStorage.getDocuments().size();
-
-        if (totalDocs <= 0) {
-            throw new Exceptions.InvalidIndexEntryException("Index contains no documents");
-        }
-
-        log.info("Query context built: docId {}, termStatsCount {}, termsDfCount {}, totalDocs {}",
-                docId, termStatsOfDoc.size(), termDocumentFrequency.size(), totalDocs);
-
-        return new QueryContext(docId, termStatsOfDoc, termDocumentFrequency, totalDocs);
+        return new QueryContext(docId, termScores, totalDocs);
     }
 
     @Override
