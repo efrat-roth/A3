@@ -2,6 +2,7 @@ package org;
 
 import org.analyzing.analyzerStrategy.AnalyzerProvider;
 import org.indexing.InMemoryIndexWriter;
+import org.indexing.IndexFile;
 import org.quering.Query;
 import org.quering.QueryProcessor;
 import org.quering.QueryType;
@@ -42,6 +43,7 @@ public class Main {
 
 
             // 4. Index Document
+
             String content1 = "Java, Search Engine.";
             String content2 = "Java is a @powerful language for building search engine";
             List<Field> document = List.of(
@@ -87,7 +89,9 @@ public class Main {
             );
 
             writer.addDocument(document2);
-
+            IndexFile indexFile = new IndexFile(writer);
+            indexFile.indexFile("src/main/data/document2.txt");
+            indexFile.indexFile("src/main/data/document1.txt");
 
             // 5. Build Reader
             InMemoryIndexReader reader =
@@ -107,8 +111,8 @@ public class Main {
             Query query = new Query(
                     UUID.randomUUID().toString(),
                     java.util.Map.of(
-                            "title", "all",
-                            "body", "@"
+                            "name", "gaming",
+                            "price", "89.99"
                     ),
                     10,
                     0,
