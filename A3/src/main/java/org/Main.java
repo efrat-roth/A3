@@ -65,7 +65,7 @@ public class Main {
 
             writer.addDocument(document);
 
-            String content3 = "All or Nothing";
+            String content3 = "All all or Nothing";
             String content4 = "Is knowing the all details good?";
             List<Field> document2 = List.of(
                     new Field(
@@ -107,7 +107,7 @@ public class Main {
             Query query = new Query(
                     UUID.randomUUID().toString(),
                     java.util.Map.of(
-                            "title", "@",
+                            "title", "all",
                             "body", "@"
                     ),
                     10,
