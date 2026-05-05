@@ -21,16 +21,10 @@ public class ScoreRegistry {
 
         log.debug("Retrieving scorer: {}", name);
 
-        if (name == null || name.isBlank()) {
-            log.error("Scorer name is null or blank");
-            throw new Exceptions.UnsupportedScoringAlgorithmException("Scoring algorithm name cannot be null or blank");
-        }
-
         Supplier<ScoreCalculator> supplier = scorers.get(name);
 
         if (supplier == null) {
             log.warn("Unknown scorer requested: {}", name);
-
             throw new Exceptions.UnsupportedScoringAlgorithmException("Unsupported scoring algorithm: " + name);
         }
 

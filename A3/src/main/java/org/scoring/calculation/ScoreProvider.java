@@ -9,13 +9,12 @@ public class ScoreProvider {
     private final AppConfig config;
     private final ScoreRegistry scoreRegistry;
 
-    public ScoreProvider(AppConfig config) throws IOException {
+    public ScoreProvider(AppConfig config) {
         this.config = config;
         scoreRegistry = new ScoreRegistry();
     }
 
-    public ScoreCalculator provide() throws IOException {
-
+    public ScoreCalculator provide() {
         return scoreRegistry.get(config.index.getScoringAlgorithm());
 
     }
