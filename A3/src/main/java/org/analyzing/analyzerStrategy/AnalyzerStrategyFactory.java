@@ -17,46 +17,40 @@ import java.util.Map;
 public class AnalyzerStrategyFactory {
 
     private final Map<String, AnalyzerStrategy> analyzers = new HashMap<>();
-    private final CharFilterProvider charFilterProvider;
+    private final CharFilterProvider charFilterProvider = new CharFilterProvider();
     private final TokenFilterProvider tokenFilterProvider;
-    private final TokenizerProvider tokenizerProvider;
+    private final TokenizerProvider tokenizerProvider =  new TokenizerProvider();
 
     public AnalyzerStrategyFactory(AppConfig config) throws IOException {
-
-        this.charFilterProvider = new CharFilterProvider();
         this.tokenFilterProvider = new TokenFilterProvider(config);
-        this.tokenizerProvider = new TokenizerProvider();
-        buildAnalyzers(config);
+        registerAnalyzers(config);
     }
 
     public AnalyzerStrategy get(String name) {
-
-        if (name == null || name.isBlank()) {
-            throw new Exceptions.UnsupportedAnalyzerStrategyException("Analyzer strategy name cannot be null or blank");
-        }
         AnalyzerStrategy analyzerStrategy = analyzers.get(name);
         if (analyzerStrategy == null) {
-            throw new Exceptions.UnsupportedAnalyzerStrategyException("Unknown analyzer strategy: " + name);
+            throw new Exceptions.UnsupportedAnalyzerStrategyException("Unknown analyzer: " + name);
         }
         return analyzerStrategy;
     }
 
-    private void buildAnalyzers(AppConfig config) throws IOException {
-        AnalyzerDefinition analyzerDefinition;
+    private void registerAnalyzers(AppConfig config) throws IOException {
 
-        if ("default".equals(config.analyzer.getStrategy())) {
-            analyzerDefinition = config.analyzer.getAnalyzerDefinition();
-            analyzers.put("default", new DefaultAnalyzerStrategy(buildAnalyzer(analyzerDefinition)));
-        }
-
-        if ("fieldBased".equals(config.analyzer.getStrategy())) {
-            Map<String, Analyzer> analyzersFields = new HashMap<>();
-            Map<String, AnalyzerDefinition> fieldsAnalyzers = config.analyzer.getFields();
-            for (Map.Entry<String, AnalyzerDefinition> entry : fieldsAnalyzers.entrySet()) {
-                analyzerDefinition = entry.getValue();
-                analyzersFields.put(entry.getKey(), buildAnalyzer(analyzerDefinition));
+        switch (config.analyzer.getStrategy()) {
+            case "default" -> {
+                AnalyzerDefinition analyzerDefinition = config.analyzer.getAnalyzerDefinition();
+                analyzers.put("default", new DefaultAnalyzerStrategy(buildAnalyzer(analyzerDefinition)));
             }
-            analyzers.put("fieldBased", new FieldBasedAnalyzerStrategy(analyzersFields));
+            case "fieldBased" -> {
+                Map<String, Analyzer> fieldAnalyzers = new HashMap<>();
+                for (Map.Entry<String, AnalyzerDefinition> entry : config.analyzer.getFields().entrySet()) {
+                    fieldAnalyzers.put(entry.getKey(), buildAnalyzer(entry.getValue()));
+                }
+                analyzers.put("fieldBased", new FieldBasedAnalyzerStrategy(fieldAnalyzers));
+            }
+
+            default -> throw new Exceptions.UnsupportedAnalyzerStrategyException(
+                    "Unknown analyzer strategy: " + config.analyzer.getStrategy());
         }
     }
 

@@ -22,12 +22,10 @@ public class FieldBasedAnalyzerStrategy implements AnalyzerStrategy {
             throw new Exceptions.AnalyzerConfigurationException("Field analyzers are not configured");
         }
 
-        Analyzer analyzer = analyzers.get(field);
-
-        if (analyzer == null) {
+        if (analyzers.get(field) == null) {
             throw new Exceptions.AnalyzerNotFoundException("No analyzer configured for field: " + field);
         }
 
-        return analyzer;
+        return analyzers.get(field);
     }
 }

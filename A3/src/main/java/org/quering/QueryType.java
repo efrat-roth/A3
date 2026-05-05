@@ -9,11 +9,8 @@ import org.utils.Exceptions;
 public enum QueryType {
     AND("and"),
     OR("or"),
-    NOT("not"),
-    MUST("must"),
-    RANGE("range"),
-    INCLUDE("include"),
-    EXCLUDE("exclude");
+    MUST_NOT("must_not"),
+    EXACT("exact");
 
     private final String value;
 
