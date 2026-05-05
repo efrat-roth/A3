@@ -15,9 +15,12 @@ public class LowercaseCharFilter implements CharFilter {
 
         log.debug("Applying lowercase char filter: inputLength {}",input.length());
 
-        String output = input.toLowerCase();
+        StringBuilder sb = new StringBuilder(input.length());
+        for (int i = 0; i < input.length(); i++) {
+            sb.append(Character.toLowerCase(input.charAt(i)));
+        }
+        log.debug("Lowercase char filter applied: outputLength {}",sb.length());
+        return sb.toString();
 
-        log.debug("Lowercase char filter applied: outputLength {}",output.length());
-        return output;
     }
 }

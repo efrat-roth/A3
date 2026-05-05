@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.analyzing.Token;
 import org.utils.Exceptions;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -21,7 +23,7 @@ public class StopwordsTokenFilter implements TokenFilter {
             throw new Exceptions.AnalyzerConfigurationException("Stopwords set cannot be null");
         }
 
-        this.stopwords = Set.copyOf(stopwords);
+        this.stopwords = new HashSet<>(stopwords);
     }
 
     @Override
@@ -33,8 +35,13 @@ public class StopwordsTokenFilter implements TokenFilter {
 
         log.debug("Applying stopwords token filter: inputTokenCount {}",tokens.size());
 
-        List<Token> filteredTokens = tokens.stream()
-                .filter(token -> !stopwords.contains(token.term())).collect(Collectors.toList());
+        List<Token> filteredTokens = new ArrayList<>(tokens.size());
+
+        for (Token token : tokens) {
+            if (!stopwords.contains(token.term())) {
+                filteredTokens.add(token);
+            }
+        }
 
         log.debug("Stopwords filter applied: removed {} tokens",tokens.size() - filteredTokens.size());
 

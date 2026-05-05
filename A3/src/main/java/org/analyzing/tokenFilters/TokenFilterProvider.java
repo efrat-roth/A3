@@ -23,28 +23,11 @@ public class TokenFilterProvider {
     public List<TokenFilter> provide(List<String> names) {
 
         if (names == null) {
-            throw new Exceptions.AnalyzerConfigurationException(
-                    "Token filter configuration is null"
-            );
+            throw new Exceptions.AnalyzerConfigurationException("Token filter configuration is null");
         }
 
-        List<TokenFilter> filters = new ArrayList<>();
-
-        for (String name : names) {
-
-            TokenFilter tokenFilter = tokenFilterRegistry.get(name);
-
-            if (tokenFilter == null) {
-                throw new Exceptions.AnalyzerNotFoundException(
-                        "Unknown token filter: " + name
-                );
-            }
-
-            filters.add(tokenFilter);
-
-            log.debug("Token filter created: {}", name);
-        }
-
-        return filters;
+        return names.stream()
+                .map(tokenFilterRegistry::get)
+                .toList();
     }
 }
