@@ -41,17 +41,20 @@ public class QueryProcessor {
             if (postingsTerms == null) {
                 log.warn("Skipping field because postings were not found: field {}", fieldName);
             }
-            assert postingsTerms != null;
-            Map<String, PostingList> postingsTermsInQuery = postingsTerms.entrySet().stream()
-                    .filter(entry -> queryFieldTokens.stream().anyMatch(term ->
-                            entry.getKey().equals(term)))
-                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+            Map<String, PostingList> postingsTermsInQuery = new HashMap<>();
+            if (postingsTerms == null) continue;
+            for (String term : queryFieldTokens) {
+                PostingList pl = postingsTerms.get(term);
+                if (pl != null) {
+                    postingsTermsInQuery.put(term, pl);
+                }
+
+            }
             log.debug("Postings matched query tokens: field {}, matchedTermCount {}", fieldName, postingsTermsInQuery.size());
 
-            matchDocs.addAll(new HashSet<>(postingsTermsInQuery.values().stream()
-                    .map(entry -> entry.getPostings().keySet())
-                    .flatMap(Set::stream)
-                    .collect(Collectors.toSet())));
+            for (PostingList pl : postingsTermsInQuery.values()) {
+                matchDocs.addAll(pl.getPostings().keySet());
+            }
         }
         log.debug("Matching documents found: count {}", matchDocs.size());
         return matchDocs;
