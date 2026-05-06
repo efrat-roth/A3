@@ -12,6 +12,7 @@ import org.storage.Field;
 import org.storage.IndexStorage;
 import org.storage.invertedIndex.InMemoryInvertedIndex;
 import org.storage.invertedIndex.InvertedIndex;
+import org.storage.invertedIndex.InvertedIndexProvider;
 import org.utils.ConfigLoader;
 import org.utils.config.AppConfig;
 
@@ -31,8 +32,8 @@ public class Main {
             AnalyzerProvider analyzerProvider = new AnalyzerProvider(appConfig);
 
             // 2. Build Storage
-            InvertedIndex invertedIndex = new InMemoryInvertedIndex();
-            IndexStorage indexStorage = new IndexStorage(invertedIndex);
+            InvertedIndexProvider invertedIndexProvider = new InvertedIndexProvider(appConfig);
+            IndexStorage indexStorage = new IndexStorage(invertedIndexProvider.provide());
 
             // 3. Build Writer
             InMemoryIndexWriter writer =
