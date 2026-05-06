@@ -81,8 +81,8 @@ public class QueryProcessor {
             log.info("Query processed: queryId {}, matchedDocs {}, results {}",
                     query.getQueryId(), matchDocs.size(), results.size());
 
-            List<ScoreResult> resultDocs = results.stream().sorted(Comparator.comparingDouble(ScoreResult::totalScore)
-                    .reversed()).skip(query.getStart()).limit(query.getLimit()).toList();
+            List<ScoreResult> resultDocs = results.stream().sorted(Comparator.comparingDouble(ScoreResult::totalScore))
+                    .skip(query.getStart()).limit(query.getLimit()).toList();
 
             return resultDocs.stream().collect(Collectors.toMap(
                     ScoreResult::docId,
