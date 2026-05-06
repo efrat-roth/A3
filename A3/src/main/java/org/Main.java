@@ -111,8 +111,9 @@ public class Main {
             Query query = new Query(
                     UUID.randomUUID().toString(),
                     java.util.Map.of(
-                            "name", "gaming",
-                            "price", "89.99"
+                            //"name", "gaming",
+                            //"price", "89.99",
+                            "category","electronics"
                     ),
                     10,
                     0,
