@@ -1,5 +1,6 @@
 package org.analyzing.analyzerStrategy;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.analyzing.Analyzer;
 import org.analyzing.charFilters.CharFilterProvider;
@@ -16,22 +17,15 @@ import java.util.Map;
 @Slf4j
 public class AnalyzerStrategyFactory {
 
-    private final Map<String, AnalyzerStrategy> analyzers = new HashMap<>();
     private final CharFilterProvider charFilterProvider = new CharFilterProvider();
     private final TokenFilterProvider tokenFilterProvider;
-    private final TokenizerProvider tokenizerProvider =  new TokenizerProvider();
+    private final TokenizerProvider tokenizerProvider = new TokenizerProvider();
+    @Getter
+    private AnalyzerStrategy analyzerStrategy;
 
     public AnalyzerStrategyFactory(AppConfig config) throws IOException {
         this.tokenFilterProvider = new TokenFilterProvider(config);
         registerAnalyzers(config);
-    }
-
-    public AnalyzerStrategy get(String name) {
-        AnalyzerStrategy analyzerStrategy = analyzers.get(name);
-        if (analyzerStrategy == null) {
-            throw new Exceptions.UnsupportedAnalyzerStrategyException("Unknown analyzer: " + name);
-        }
-        return analyzerStrategy;
     }
 
     private void registerAnalyzers(AppConfig config) throws IOException {
@@ -39,14 +33,15 @@ public class AnalyzerStrategyFactory {
         switch (config.analyzer.getStrategy()) {
             case "default" -> {
                 AnalyzerDefinition analyzerDefinition = config.analyzer.getAnalyzerDefinition();
-                analyzers.put("default", new DefaultAnalyzerStrategy(buildAnalyzer(analyzerDefinition)));
+                analyzerStrategy = new DefaultAnalyzerStrategy(buildAnalyzer(analyzerDefinition));
             }
             case "fieldBased" -> {
                 Map<String, Analyzer> fieldAnalyzers = new HashMap<>();
                 for (Map.Entry<String, AnalyzerDefinition> entry : config.analyzer.getFields().entrySet()) {
                     fieldAnalyzers.put(entry.getKey(), buildAnalyzer(entry.getValue()));
                 }
-                analyzers.put("fieldBased", new FieldBasedAnalyzerStrategy(fieldAnalyzers));
+                analyzerStrategy = new FieldBasedAnalyzerStrategy(fieldAnalyzers);
+                ;
             }
 
             default -> throw new Exceptions.UnsupportedAnalyzerStrategyException(

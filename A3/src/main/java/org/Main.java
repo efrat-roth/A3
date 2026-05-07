@@ -1,6 +1,6 @@
 package org;
 
-import org.analyzing.analyzerStrategy.AnalyzerProvider;
+import org.analyzing.analyzerStrategy.AnalyzerStrategyFactory;
 import org.indexing.InMemoryIndexWriter;
 import org.indexing.IndexFile;
 import org.quering.Query;
@@ -10,8 +10,6 @@ import org.reading.InMemoryIndexReader;
 import org.scoring.calculation.ScoreProvider;
 import org.storage.Field;
 import org.storage.IndexStorage;
-import org.storage.invertedIndex.InMemoryInvertedIndex;
-import org.storage.invertedIndex.InvertedIndex;
 import org.storage.invertedIndex.InvertedIndexProvider;
 import org.utils.ConfigLoader;
 import org.utils.config.AppConfig;
@@ -29,7 +27,7 @@ public class Main {
 
 
             // 1. Build Analyzer
-            AnalyzerProvider analyzerProvider = new AnalyzerProvider(appConfig);
+            AnalyzerStrategyFactory analyzerFactory = new AnalyzerStrategyFactory(appConfig);
 
             // 2. Build Storage
             InvertedIndexProvider invertedIndexProvider = new InvertedIndexProvider(appConfig);
@@ -38,7 +36,7 @@ public class Main {
             // 3. Build Writer
             InMemoryIndexWriter writer =
                     new InMemoryIndexWriter(
-                            analyzerProvider.provide(),
+                            analyzerFactory.getAnalyzerStrategy(),
                             indexStorage
                     );
 
@@ -102,7 +100,7 @@ public class Main {
             ScoreProvider scoreProvider = new ScoreProvider(appConfig);
             QueryProcessor processor =
                     new QueryProcessor(
-                            analyzerProvider.provide(),
+                            analyzerFactory.getAnalyzerStrategy(),
                             reader,
                             scoreProvider.provide()
                     );
@@ -112,8 +110,8 @@ public class Main {
             Query query = new Query(
                     UUID.randomUUID().toString(),
                     java.util.Map.of(
-                            //"name", "gaming",
-                            //"price", "89.99",
+                            "name", "gaming",
+                            "price", "89.99",
                             "category","electronics"
                     ),
                     10,
