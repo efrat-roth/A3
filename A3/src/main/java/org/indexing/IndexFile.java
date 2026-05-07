@@ -7,10 +7,8 @@ import org.utils.Exceptions;
 import org.utils.FileReader;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @AllArgsConstructor
@@ -61,10 +59,6 @@ public class IndexFile {
     }
 
     private Field buildField(String line, int lineNumber) {
-        if (line == null || line.isBlank()) {
-            throw new Exceptions.InvalidFieldException("Empty field at line " + lineNumber);
-        }
-
         log.debug("Building field from line {}", lineNumber);
 
         String[] fieldSplit = line.split(":", 2);
@@ -82,55 +76,12 @@ public class IndexFile {
         if (content.isBlank()) {
             throw new Exceptions.InvalidFieldException("Empty content for field '" + fieldName + "' at line " + lineNumber);
         }
-        Type type = typeDefiner(content);
 
-        log.debug("Field built: name={}, type={}, length={}", fieldName, type.getTypeName(), content.length());
+        log.debug("Field built: name={}, length={}", fieldName, content.length());
 
-        return new Field(fieldName, type, content.length(), true, true, content);
+        return new Field(fieldName, content.length(), true, true, content);
     }
-
-    private Type typeDefiner(String content) {
-
-        log.debug("Defining type for content: {}", content);
-
-        if (content == null || content.isBlank()) {
-            throw new Exceptions.InvalidFieldException("Field content cannot be null or blank");
-        }
-        if (content.startsWith("\"") && content.endsWith("\"")) {
-            return String.class;
-        }
-        if (content.startsWith("[") && content.endsWith("]")) {
-            return List.class;
-        }
-        if (content.startsWith("{") && content.endsWith("}")) {
-            return Map.class;
-        }
-        if (content.equals("true") || content.equals("false")) {
-            return Boolean.class;
-        }
-        try {
-            Integer.parseInt(content);
-            return Integer.class;
-
-        } catch (NumberFormatException ignored) {
-        }
-        try {
-            Long.parseLong(content);
-            return Long.class;
-        } catch (NumberFormatException ignored) {
-        }
-
-        try {
-            Double.parseDouble(content);
-            return Double.class;
-
-        } catch (NumberFormatException ignored) {
-        }
-
-        log.error("Unsupported field type detected: {}", content);
-
-        throw new Exceptions.UnsupportedFieldTypeException("Unsupported field type: " + content);
-    }
+    
 
     private void validatePath(String path) {
         if (path == null || path.isBlank()) {

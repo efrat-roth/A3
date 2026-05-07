@@ -6,7 +6,6 @@ import org.analyzing.Analyzer;
 import org.analyzing.charFilters.CharFilterRegistry;
 import org.analyzing.tokenFilters.TokenFilterRegistry;
 import org.analyzing.tokenizers.TokenizerFactory;
-import org.analyzing.tokenizers.TokenizerProvider;
 import org.utils.Exceptions;
 import org.utils.config.AnalyzerDefinition;
 import org.utils.config.AppConfig;
