@@ -1,26 +1,18 @@
 package org.analyzing.charFilters;
 
 import lombok.extern.slf4j.Slf4j;
-import org.utils.Exceptions;
 
 @Slf4j
 public class LowercaseCharFilter implements CharFilter {
 
     @Override
     public String apply(String input) {
-
-        if (input == null) {
-            throw new Exceptions.InvalidDocumentException("Input cannot be null");
-        }
-
-        log.debug("Applying lowercase char filter: inputLength {}",input.length());
-
+        log.debug("Applying lowercase char filter: inputLength {}", input.length());
         StringBuilder sb = new StringBuilder(input.length());
         for (int i = 0; i < input.length(); i++) {
             sb.append(Character.toLowerCase(input.charAt(i)));
         }
-        log.debug("Lowercase char filter applied: outputLength {}",sb.length());
+        log.debug("Lowercase char filter applied: outputLength {}", sb.length());
         return sb.toString();
-
     }
 }

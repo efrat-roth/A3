@@ -2,10 +2,11 @@ package org.analyzing.tokenFilters;
 
 import lombok.extern.slf4j.Slf4j;
 import org.utils.Exceptions;
+import org.utils.FileReader;
+import org.utils.config.AppConfig;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.io.IOException;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
@@ -15,21 +16,31 @@ public class TokenFilterRegistry {
     private final Map<String, Supplier<TokenFilter>> filters = new HashMap<>();
     private final Map<String, TokenFilter> cache = new ConcurrentHashMap<>();
 
-    public TokenFilterRegistry(Set<String> stopwords) {
-
-        filters.put("stopwords", () -> new StopwordsTokenFilter(stopwords));
+    public TokenFilterRegistry(AppConfig config) {
+        String stopwordsFilePath = config.storage.getStopwordsFilePath();
+        filters.put("stopwords", () -> {
+            try {
+                return new StopwordsTokenFilter(new HashSet<>(FileReader.readFileLines(stopwordsFilePath)));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
         log.debug("Registered token filters: {}", filters.keySet());
     }
 
-    public TokenFilter get(String name) {
-        log.debug("Retrieving token filter: {}", name);
-        return cache.computeIfAbsent(name, n -> {
-            Supplier<TokenFilter> tokenFilter = filters.get(n);
-            if (tokenFilter == null) {
-                log.warn("Unknown token filter requested: {}", n);
-                throw new Exceptions.AnalyzerNotFoundException("Unknown token filter: " + n);
-            }
-            return tokenFilter.get();
-        });
+    public List<TokenFilter> get(List<String> names) {
+        List<TokenFilter> requestedFilters = new ArrayList<>();
+        for (String name : names) {
+            log.debug("Retrieving token filter: {}", name);
+            requestedFilters.add( cache.computeIfAbsent(name, n -> {
+                Supplier<TokenFilter> tokenFilter = filters.get(n);
+                if (tokenFilter == null) {
+                    log.warn("Unknown token filter requested: {}", n);
+                    throw new Exceptions.AnalyzerNotFoundException("Unknown token filter: " + n);
+                }
+                return tokenFilter.get();
+            }));
+        }
+        return requestedFilters;
     }
 }

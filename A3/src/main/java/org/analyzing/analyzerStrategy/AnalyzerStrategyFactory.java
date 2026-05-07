@@ -3,8 +3,9 @@ package org.analyzing.analyzerStrategy;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.analyzing.Analyzer;
-import org.analyzing.charFilters.CharFilterProvider;
-import org.analyzing.tokenFilters.TokenFilterProvider;
+import org.analyzing.charFilters.CharFilterRegistry;
+import org.analyzing.tokenFilters.TokenFilterRegistry;
+import org.analyzing.tokenizers.TokenizerFactory;
 import org.analyzing.tokenizers.TokenizerProvider;
 import org.utils.Exceptions;
 import org.utils.config.AnalyzerDefinition;
@@ -17,14 +18,14 @@ import java.util.Map;
 @Slf4j
 public class AnalyzerStrategyFactory {
 
-    private final CharFilterProvider charFilterProvider = new CharFilterProvider();
-    private final TokenFilterProvider tokenFilterProvider;
-    private final TokenizerProvider tokenizerProvider = new TokenizerProvider();
+    private final CharFilterRegistry charFilterRegistry = new CharFilterRegistry();
+    private final TokenFilterRegistry tokenFilterRegistry;
+    private final TokenizerFactory tokenizerFactory = new TokenizerFactory();
     @Getter
     private AnalyzerStrategy analyzerStrategy;
 
     public AnalyzerStrategyFactory(AppConfig config) throws IOException {
-        this.tokenFilterProvider = new TokenFilterProvider(config);
+        this.tokenFilterRegistry = new TokenFilterRegistry(config);
         registerAnalyzers(config);
     }
 
@@ -51,9 +52,9 @@ public class AnalyzerStrategyFactory {
 
     private Analyzer buildAnalyzer(AnalyzerDefinition analyzerDefinition) throws IOException {
         return Analyzer.builder().
-                charFilters(charFilterProvider.provide(analyzerDefinition.getCharFilters())).
-                tokenFilters(tokenFilterProvider.provide(analyzerDefinition.getTokenFilters())).
-                tokenizer(tokenizerProvider.provide(analyzerDefinition.getTokenizer()))
+                charFilters(charFilterRegistry.get(analyzerDefinition.getCharFilters())).
+                tokenFilters(tokenFilterRegistry.get(analyzerDefinition.getTokenFilters())).
+                tokenizer(tokenizerFactory.get(analyzerDefinition.getTokenizer()))
                 .build();
     }
 }

@@ -13,10 +13,6 @@ public class WhitespaceTokenizer implements Tokenizer {
     @Override
     public List<Token> tokenize(String input) {
 
-        if (input == null) {
-            throw new Exceptions.InvalidDocumentException("Tokenizer input cannot be null");
-        }
-
         log.debug("Tokenizing input with whitespace tokenizer: inputLength {}", input.length());
 
         List<Token> tokens = new ArrayList<>();

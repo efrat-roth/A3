@@ -31,10 +31,6 @@ public class PunctuationCharFilter implements CharFilter {
     @Override
     public String apply(String input) {
 
-        if (input == null) {
-            throw new Exceptions.InvalidDocumentException("Input cannot be null");
-        }
-
         log.debug("Applying punctuation char filter: inputLength {}", input.length());
 
         StringBuilder sb = new StringBuilder(input.length());

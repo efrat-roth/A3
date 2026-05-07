@@ -1,10 +1,11 @@
 package org.analyzing.charFilters;
 
 import lombok.extern.slf4j.Slf4j;
-import org.analyzing.tokenFilters.TokenFilter;
 import org.utils.Exceptions;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
@@ -22,15 +23,19 @@ public class CharFilterRegistry {
         log.debug("Registered char filters: {}", filters.keySet());
     }
 
-    public CharFilter get(String name) {
-        log.debug("Retrieving char filter: {}", name);
-        return cache.computeIfAbsent(name, n -> {
-            Supplier<CharFilter> supplier = filters.get(n);
-            if (supplier == null) {
-                log.warn("Unknown char filter requested: {}", n);
-                throw new Exceptions.AnalyzerNotFoundException("Unknown char filter: " + n);}
-            return supplier.get();
-        });
-
+    public List<CharFilter> get(List<String> names) {
+        List<CharFilter> charFilters = new ArrayList<>();
+        for (String name : names) {
+            log.debug("Retrieving char filter: {}", name);
+            charFilters.add(cache.computeIfAbsent(name, n -> {
+                Supplier<CharFilter> supplier = filters.get(n);
+                if (supplier == null) {
+                    log.warn("Unknown char filter requested: {}", n);
+                    throw new Exceptions.AnalyzerNotFoundException("Unknown char filter: " + n);
+                }
+                return supplier.get();
+            }));
+        }
+        return charFilters;
     }
 }
