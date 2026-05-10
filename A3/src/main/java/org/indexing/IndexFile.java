@@ -81,7 +81,6 @@ public class IndexFile {
 
         return new Field(fieldName, content.length(), true, true, content);
     }
-    
 
     private void validatePath(String path) {
         if (path == null || path.isBlank()) {

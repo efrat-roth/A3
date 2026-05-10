@@ -1,5 +1,7 @@
 package org.analyzing.analyzerStrategy;
 
-public abstract class AnalyzerStrategy {
+import org.analyzing.Analyzer;
 
+public interface AnalyzerStrategy {
+    public Analyzer getAnalyzer(String field);
 }
