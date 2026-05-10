@@ -10,7 +10,7 @@ import org.reading.IndexReader;
 import org.reading.QueryContext;
 import org.scoring.ScoreResult;
 import org.scoring.calculation.ScoreCalculator;
-import org.storage.Field;
+import org.storage.FieldType;
 import org.storage.invertedIndex.PostingList;
 import org.storage.invertedIndex.TermStats;
 import org.utils.Exceptions;
@@ -39,8 +39,8 @@ public class QueryProcessorTest {
         QueryContext doc1Context = queryContext("doc-1");
         QueryContext doc2Context = queryContext("doc-2");
 
-        List<Field> doc1 = List.of(new Field("title", true));
-        List<Field> doc2 = List.of(new Field("title", true));
+        List<FieldType> doc1 = List.of(new FieldType("title", true));
+        List<FieldType> doc2 = List.of(new FieldType("title", true));
 
         when(indexReader.getPosting("title")).thenReturn(Map.of(
                 "hello", postingList("doc-2", "doc-1")
@@ -61,7 +61,7 @@ public class QueryProcessorTest {
         when(scoreCalculator.calculateScores(doc2Context))
                 .thenReturn(new ScoreResult("doc-2", 1.5));
 
-        Map<List<Field>, Double> results = processor.process(query);
+        Map<List<FieldType>, Double> results = processor.process(query);
 
         assertThat(results)
                 .hasSize(2)
@@ -103,8 +103,8 @@ public class QueryProcessorTest {
 
         QueryContext context = queryContext("doc-1");
 
-        List<Field> doc1 = List.of(new Field("title", true));
-        List<Field> doc2 = List.of(new Field("body", true));
+        List<FieldType> doc1 = List.of(new FieldType("title", true));
+        List<FieldType> doc2 = List.of(new FieldType("body", true));
 
         when(indexReader.getPosting("title"))
                 .thenReturn(Map.of("java", postingList("doc-1")));
@@ -130,7 +130,7 @@ public class QueryProcessorTest {
                     return new ScoreResult(qc.getDocId(), 1.0);
                 });
 
-        Map<List<Field>, Double> results = processor.process(query);
+        Map<List<FieldType>, Double> results = processor.process(query);
 
         assertThat(results).hasSize(2);
 
@@ -160,7 +160,7 @@ public class QueryProcessorTest {
         when(indexReader.getPosting("title"))
                 .thenReturn(Map.of("hello", postingList("doc-1")));
 
-        Map<List<Field>, Double> results = processor.process(query);
+        Map<List<FieldType>, Double> results = processor.process(query);
 
         assertThat(results).isEmpty();
 

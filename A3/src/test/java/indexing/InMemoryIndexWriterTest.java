@@ -5,7 +5,7 @@ import org.analyzing.Token;
 import org.analyzing.analyzerStrategy.AnalyzerStrategy;
 import org.indexing.InMemoryIndexWriter;
 import org.junit.jupiter.api.Test;
-import org.storage.Field;
+import org.storage.FieldType;
 import org.storage.IndexStorage;
 import org.storage.invertedIndex.InMemoryInvertedIndex;
 import org.storage.invertedIndex.PostingList;
@@ -25,7 +25,7 @@ public class InMemoryIndexWriterTest {
                 new Token("hello", 1),
                 new Token("world", 2)
         ));
-        Field title = new Field("title", String.class, 11, true, true, "hello world");
+        FieldType title = new FieldType("title", String.class, 11, true, true, "hello world");
 
         writer.addDocument(List.of(title));
 
@@ -45,7 +45,7 @@ public class InMemoryIndexWriterTest {
         InMemoryIndexWriter writer = createWriter(storage, field -> {
             throw new AssertionError("Unindexed fields should not be analyzed");
         });
-        Field field = new Field("raw", String.class, 6, true, false, "secret");
+        FieldType field = new FieldType("raw", String.class, 6, true, false, "secret");
 
         writer.addDocument(List.of(field));
 
@@ -57,8 +57,8 @@ public class InMemoryIndexWriterTest {
     void addDocumentShouldUseTotalDocumentLengthForTermFrequency() throws Exception {
         IndexStorage storage = new IndexStorage(new InMemoryInvertedIndex());
         InMemoryIndexWriter writer = createWriter(storage, field -> analyzerReturning(new Token(field, 1)));
-        Field title = new Field("title", String.class, 5, true, true, "hello");
-        Field body = new Field("body", String.class, 15, true, true, "content");
+        FieldType title = new FieldType("title", String.class, 5, true, true, "hello");
+        FieldType body = new FieldType("body", String.class, 15, true, true, "content");
 
         writer.addDocument(List.of(title, body));
 
@@ -77,7 +77,7 @@ public class InMemoryIndexWriterTest {
                     throw new IOException("analyzer failed");
                 }))
                 .build());
-        Field field = new Field("title", String.class, 5, true, true, "hello");
+        FieldType field = new FieldType("title", String.class, 5, true, true, "hello");
 
         assertThatThrownBy(() -> writer.addDocument(List.of(field)))
                 .isInstanceOf(RuntimeException.class)

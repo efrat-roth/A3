@@ -2,7 +2,7 @@ package org.reading;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.storage.Field;
+import org.storage.FieldType;
 import org.storage.IndexStorage;
 import org.storage.invertedIndex.InvertedIndex;
 import org.storage.invertedIndex.PostingList;
@@ -73,7 +73,7 @@ public class InMemoryIndexReader implements IndexReader {
     }
 
     @Override
-    public List<Field> getDocument(String docId) {
+    public List<FieldType> getDocument(String docId) {
         return indexStorage.getDocument(docId);
     }
 

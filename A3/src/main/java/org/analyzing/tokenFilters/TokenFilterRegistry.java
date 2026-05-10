@@ -2,10 +2,11 @@ package org.analyzing.tokenFilters;
 
 import lombok.extern.slf4j.Slf4j;
 import org.utils.Exceptions;
-import org.utils.FileReader;
 import org.utils.config.AppConfig;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
@@ -20,7 +21,7 @@ public class TokenFilterRegistry {
         String stopwordsFilePath = config.storage.getStopwordsFilePath();
         filters.put("stopwords", () -> {
             try {
-                return new StopwordsTokenFilter(new HashSet<>(FileReader.readFileLines(stopwordsFilePath)));
+                return new StopwordsTokenFilter(new HashSet<>(Files.readAllLines(Path.of(stopwordsFilePath))));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

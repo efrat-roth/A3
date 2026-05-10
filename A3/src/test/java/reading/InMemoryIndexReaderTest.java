@@ -3,7 +3,7 @@ package reading;
 import org.junit.jupiter.api.Test;
 import org.reading.InMemoryIndexReader;
 import org.reading.QueryContext;
-import org.storage.Field;
+import org.storage.FieldType;
 import org.storage.IndexStorage;
 import org.storage.invertedIndex.InMemoryInvertedIndex;
 import org.storage.invertedIndex.PostingList;
@@ -99,8 +99,8 @@ public class InMemoryIndexReaderTest {
 
     private static IndexStorage storageWithDocuments() {
         IndexStorage storage = new IndexStorage(new InMemoryInvertedIndex());
-        storage.addDocument("doc-1", List.of(new Field("title", String.class, 4, true, true, "java")));
-        storage.addDocument("doc-2", List.of(new Field("title", String.class, 6, true, true, "search")));
+        storage.addDocument("doc-1", List.of(new FieldType("title", String.class, 4, true, true, "java")));
+        storage.addDocument("doc-2", List.of(new FieldType("title", String.class, 6, true, true, "search")));
         return storage;
     }
 }

@@ -8,7 +8,7 @@ import org.quering.QueryProcessor;
 import org.quering.QueryType;
 import org.reading.InMemoryIndexReader;
 import org.scoring.calculation.ScoreProvider;
-import org.storage.Field;
+import org.storage.FieldType;
 import org.storage.IndexStorage;
 import org.storage.invertedIndex.InvertedIndexProvider;
 import org.utils.ConfigLoader;
@@ -45,8 +45,8 @@ public class Main {
 
             String content1 = "Java, Search Engine.";
             String content2 = "Java is a @powerful language for building search engine";
-            List<Field> document = List.of(
-                    new Field(
+            List<FieldType> document = List.of(
+                    new FieldType(
                             "title",
                             String.class,
                             content1.length(),
@@ -54,7 +54,7 @@ public class Main {
                             true,
                             content1
                     ),
-                    new Field(
+                    new FieldType(
                             "body",
                             String.class,
                             content2.length(),
@@ -68,8 +68,8 @@ public class Main {
 
             String content3 = "All all or Nothing";
             String content4 = "Is knowing the all details good?";
-            List<Field> document2 = List.of(
-                    new Field(
+            List<FieldType> document2 = List.of(
+                    new FieldType(
                             "title",
                             String.class,
                             content3.length(),
@@ -77,7 +77,7 @@ public class Main {
                             true,
                             content3
                     ),
-                    new Field(
+                    new FieldType(
                             "body",
                             String.class,
                             content4.length(),
@@ -121,21 +121,21 @@ public class Main {
 
 
             // 8. Execute Query
-            Map<String, Map<List<Field>, Double>> results = processor.process(query);
+            Map<String, Map<List<FieldType>, Double>> results = processor.process(query);
 
             // 9. Print Results
             System.out.println("\nSearch Results:");
 
-            for (Map.Entry<String, Map<List<Field>, Double>> entry : results.entrySet()) {
+            for (Map.Entry<String, Map<List<FieldType>, Double>> entry : results.entrySet()) {
 
                 System.out.println("Doc id: " + entry.getKey());
 
-                for (Map.Entry<List<Field>, Double> docDetails : entry.getValue().entrySet()) {
+                for (Map.Entry<List<FieldType>, Double> docDetails : entry.getValue().entrySet()) {
 
                     System.out.println("Score: " + docDetails.getValue());
                     System.out.println("Doc fields:");
 
-                    for (Field field : docDetails.getKey()) {
+                    for (FieldType field : docDetails.getKey()) {
                         System.out.println("\t" + field.getFieldName() + ": " + field.getContent());
                     }
                 }

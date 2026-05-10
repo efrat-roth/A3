@@ -18,11 +18,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class IndexStorage {
     @Getter
-    private Map<String, List<Field>> documents = new HashMap<>();
+    private Map<String, List<FieldType>> documents = new HashMap<>();
     @Getter
     private final InvertedIndex invertedIndex;
 
-    public void addDocument(String documentId, List<Field> document) {
+    public void addDocument(String documentId, List<FieldType> document) {
         if (documentId == null || documentId.isBlank()) {
             log.warn("Document id is invalid: {}", documentId);
             throw new InvalidDocumentException("Document id cannot be null or blank");
@@ -37,10 +37,10 @@ public class IndexStorage {
             log.warn("Document contains null field: id {}", documentId);
             throw new InvalidDocumentException("Document cannot contain null fields: " + documentId);
         }
-        int docLength = document.stream().mapToInt(Field::getLength).sum();
+        int docLength = document.stream().mapToInt(FieldType::getLength).sum();
         log.debug("Adding document to index storage: id {}, fieldCount {}, docLength {}", documentId, document.size(), docLength);
         documents.put(documentId, new ArrayList<>(document.stream()
-                .filter(Field::isStored)
+                .filter(FieldType::isStored)
                 .collect(Collectors.toList())) {
         });
         log.info("Document stored: id {}, storedFieldCount {}", documentId, documents.get(documentId).size());
@@ -48,7 +48,7 @@ public class IndexStorage {
 
     }
 
-    public List<Field> getDocument(String documentId) {
+    public List<FieldType> getDocument(String documentId) {
         if (documentId == null || documentId.isBlank()) {
             log.warn("Document id is invalid: {}", documentId);
             throw new InvalidDocumentException("Document id cannot be null or blank");

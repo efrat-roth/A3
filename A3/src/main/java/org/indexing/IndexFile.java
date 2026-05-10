@@ -2,11 +2,12 @@ package org.indexing;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.storage.Field;
+import org.storage.FieldType;
 import org.utils.Exceptions;
-import org.utils.FileReader;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +21,7 @@ public class IndexFile {
         validatePath(path);
         log.info("Starting file indexing: path={}", path);
         try {
-            List<Field> document = createDocument(path);
+            List<FieldType> document = createDocument(path);
 
             log.debug("Document created from file: path={}, fieldCount={}", path, document.size());
 
@@ -38,14 +39,14 @@ public class IndexFile {
         }
     }
 
-    private List<Field> createDocument(String path) throws IOException {
+    private List<FieldType> createDocument(String path) throws IOException {
         log.debug("Creating document from file: path={}", path);
 
-        List<String> lines = FileReader.readFileLines(path);
+        List<String> lines = Files.readAllLines(Path.of(path));
         if (lines.isEmpty()) {
             throw new Exceptions.InvalidDocumentException("Document file is empty: " + path);
         }
-        List<Field> document = new ArrayList<>();
+        List<FieldType> document = new ArrayList<>();
         for (int i = 0; i < lines.size(); i++) {
             String line = lines.get(i);
 
@@ -58,7 +59,7 @@ public class IndexFile {
         return document;
     }
 
-    private Field buildField(String line, int lineNumber) {
+    private FieldType buildField(String line, int lineNumber) {
         log.debug("Building field from line {}", lineNumber);
 
         String[] fieldSplit = line.split(":", 2);
@@ -79,7 +80,7 @@ public class IndexFile {
 
         log.debug("Field built: name={}, length={}", fieldName, content.length());
 
-        return new Field(fieldName, content.length(), true, true, content);
+        return new FieldType(fieldName, content.length(), true, true, content);
     }
 
     private void validatePath(String path) {

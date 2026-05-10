@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.analyzing.Token;
 import org.analyzing.analyzerStrategy.AnalyzerStrategy;
-import org.storage.Field;
+import org.storage.FieldType;
 import org.storage.IndexStorage;
 import org.utils.Exceptions;
 
@@ -19,16 +19,16 @@ public abstract class IndexWriter {
     private final AnalyzerStrategy analyzerStrategy;
     private final IndexStorage indexStorage;
 
-    public void addDocument(List<Field> document) {
+    public void addDocument(List<FieldType> document) {
         validateDocument(document);
         String docId = UUID.randomUUID().toString();
-        int docLength = document.stream().mapToInt(Field::getLength).sum();
+        int docLength = document.stream().mapToInt(FieldType::getLength).sum();
 
         log.info("Adding document to in-memory index: docId {}, fieldCount {}, docLength {}",
                 docId, document.size(), docLength);
 
         try {
-            List<Field> analyzedFields = analyzeDocument(document, docId);
+            List<FieldType> analyzedFields = analyzeDocument(document, docId);
             writeToIndex(analyzedFields, docId, docLength);
             indexStorage.addDocument(docId, document);
             log.info("Document added to in-memory index: docId {}", docId);
@@ -40,9 +40,9 @@ public abstract class IndexWriter {
         }
     }
 
-    private List<Field> analyzeDocument(List<Field> document, String docId) throws IOException {
-        List<Field> analyzed = new ArrayList<>();
-        for (Field field : document) {
+    private List<FieldType> analyzeDocument(List<FieldType> document, String docId) throws IOException {
+        List<FieldType> analyzed = new ArrayList<>();
+        for (FieldType field : document) {
             if (!field.isIndexed()) {
                 continue;
             }
@@ -55,7 +55,7 @@ public abstract class IndexWriter {
         return analyzed;
     }
 
-    private void writeToIndex(List<Field> analyzedFields, String docId, int docLength) {
+    private void writeToIndex(List<FieldType> analyzedFields, String docId, int docLength) {
         analyzedFields.forEach(field -> {
             field.getValues().forEach(token ->
                     indexStorage.getInvertedIndex().addField(
@@ -63,7 +63,7 @@ public abstract class IndexWriter {
         });
     }
 
-    private void validateDocument(List<Field> document) {
+    private void validateDocument(List<FieldType> document) {
         if (document == null) {
             throw new Exceptions.InvalidDocumentException("Document cannot be null");
         }

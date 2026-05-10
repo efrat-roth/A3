@@ -1,7 +1,7 @@
 package storage;
 
 import org.junit.jupiter.api.Test;
-import org.storage.Field;
+import org.storage.FieldType;
 import org.storage.IndexStorage;
 import org.storage.invertedIndex.InMemoryInvertedIndex;
 import org.storage.invertedIndex.InvertedIndex;
@@ -20,7 +20,7 @@ public class IndexStorageTest {
     void shouldAddAndRetrieveDocument() {
         InvertedIndex invertedIndex = new InMemoryInvertedIndex();
         IndexStorage storage = new IndexStorage(invertedIndex);
-        Field field = new Field("title", String.class, ("hello").length(), true, true, "hello");
+        FieldType field = new FieldType("title", String.class, ("hello").length(), true, true, "hello");
 
         storage.addDocument("1", List.of(field));
 
@@ -30,8 +30,8 @@ public class IndexStorageTest {
     @Test
     void addDocumentShouldStoreOnlyFieldsMarkedAsStored() {
         IndexStorage storage = new IndexStorage(new InMemoryInvertedIndex());
-        Field storedField = new Field("title", String.class, 5, true, true, "hello");
-        Field unstoredField = new Field("internal", String.class, 6, false, true, "secret");
+        FieldType storedField = new FieldType("title", String.class, 5, true, true, "hello");
+        FieldType unstoredField = new FieldType("internal", String.class, 6, false, true, "secret");
 
         storage.addDocument("doc-1", List.of(storedField, unstoredField));
 
@@ -61,8 +61,8 @@ public class IndexStorageTest {
     @Test
     void addDocumentShouldReplaceExistingDocumentWithSameId() {
         IndexStorage storage = new IndexStorage(new InMemoryInvertedIndex());
-        Field originalField = new Field("title", String.class, 5, true, true, "hello");
-        Field replacementField = new Field("title", String.class, 7, true, true, "updated");
+        FieldType originalField = new FieldType("title", String.class, 5, true, true, "hello");
+        FieldType replacementField = new FieldType("title", String.class, 7, true, true, "updated");
 
         storage.addDocument("doc-1", List.of(originalField));
 

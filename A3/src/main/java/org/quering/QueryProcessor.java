@@ -8,7 +8,7 @@ import org.analyzing.analyzerStrategy.AnalyzerStrategy;
 import org.reading.IndexReader;
 import org.scoring.ScoreResult;
 import org.scoring.calculation.ScoreCalculator;
-import org.storage.Field;
+import org.storage.FieldType;
 import org.storage.invertedIndex.PostingList;
 import org.utils.Exceptions;
 
@@ -60,7 +60,7 @@ public class QueryProcessor {
         return matchDocs;
     }
 
-    public Map<String, Map<List<Field>, Double>> process(Query query) {
+    public Map<String, Map<List<FieldType>, Double>> process(Query query) {
 
         validateQuery(query);
         try {
