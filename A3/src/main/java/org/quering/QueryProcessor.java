@@ -37,14 +37,14 @@ public class QueryProcessor {
 
             log.debug("Query field analyzed: field {}, tokenCount {}", fieldName, queryFieldTokens.size());
 
-            Map<String, PostingList> postingsTerms = indexReader.getPosting(fieldName);
+            Optional<Map<String, PostingList>> postingsTerms = indexReader.getPosting(fieldName);
             if (postingsTerms == null) {
                 log.warn("Skipping field because postings were not found: field {}", fieldName);
+                continue;
             }
             Map<String, PostingList> postingsTermsInQuery = new HashMap<>();
-            if (postingsTerms == null) continue;
             for (String term : queryFieldTokens) {
-                PostingList pl = postingsTerms.get(term);
+                PostingList pl = postingsTerms.get().get(term);
                 if (pl != null) {
                     postingsTermsInQuery.put(term, pl);
                 }
@@ -60,7 +60,7 @@ public class QueryProcessor {
         return matchDocs;
     }
 
-    public Map<String, Map<List<FieldType>, Double>> process(Query query) {
+    public List<DocQueryResult> process(Query query) {
 
         validateQuery(query);
         try {
@@ -84,10 +84,9 @@ public class QueryProcessor {
             List<ScoreResult> resultDocs = results.stream().sorted(Comparator.comparingDouble(ScoreResult::totalScore))
                     .skip(query.getStart()).limit(query.getLimit()).toList();
 
-            return resultDocs.stream().collect(Collectors.toMap(
-                    ScoreResult::docId,
-                    scoreResult -> Map.of(
-                            indexReader.getDocument(scoreResult.docId()), scoreResult.totalScore())));
+            return resultDocs.stream().map(scoreResult ->
+                    new DocQueryResult(scoreResult.docId(),
+                            indexReader.getDocument(scoreResult.docId()), scoreResult.totalScore())).toList();
         } catch (RuntimeException e) {
             log.error("Query processing failed: queryId {}", query.getQueryId(), e);
 

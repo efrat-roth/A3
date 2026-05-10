@@ -3,6 +3,7 @@ package org;
 import org.analyzing.analyzerStrategy.AnalyzerStrategyFactory;
 import org.indexing.InMemoryIndexWriter;
 import org.indexing.IndexFile;
+import org.quering.DocQueryResult;
 import org.quering.Query;
 import org.quering.QueryProcessor;
 import org.quering.QueryType;
@@ -121,24 +122,20 @@ public class Main {
 
 
             // 8. Execute Query
-            Map<String, Map<List<FieldType>, Double>> results = processor.process(query);
+            List<DocQueryResult> results = processor.process(query);
 
             // 9. Print Results
             System.out.println("\nSearch Results:");
 
-            for (Map.Entry<String, Map<List<FieldType>, Double>> entry : results.entrySet()) {
+            for (DocQueryResult docQueryResult : results) {
 
-                System.out.println("Doc id: " + entry.getKey());
-
-                for (Map.Entry<List<FieldType>, Double> docDetails : entry.getValue().entrySet()) {
-
-                    System.out.println("Score: " + docDetails.getValue());
-                    System.out.println("Doc fields:");
-
-                    for (FieldType field : docDetails.getKey()) {
-                        System.out.println("\t" + field.getFieldName() + ": " + field.getContent());
-                    }
+                System.out.println("Doc id: " + docQueryResult.docId());
+                System.out.println("Score: " + docQueryResult.score());
+                System.out.println("Doc fields:");
+                for (FieldType field : docQueryResult.fields()) {
+                    System.out.println("\t" + field.getFieldName() + ": " + field.getContent());
                 }
+
             }
         } catch (Exception e) {
             e.printStackTrace();
