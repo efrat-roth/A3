@@ -7,7 +7,7 @@ import org.quering.Query;
 import org.quering.QueryProcessor;
 import org.quering.QueryType;
 import org.reading.InMemoryIndexReader;
-import org.scoring.calculation.ScoreProvider;
+import org.scoring.calculation.ScoreRegistry;
 import org.storage.FieldType;
 import org.storage.IndexStorage;
 import org.storage.invertedIndex.InvertedIndexProvider;
@@ -97,12 +97,12 @@ public class Main {
                     new InMemoryIndexReader(indexStorage);
 
             // 6. Build Query Processor
-            ScoreProvider scoreProvider = new ScoreProvider(appConfig);
+            ScoreRegistry scoreRegistry = new ScoreRegistry(appConfig);
             QueryProcessor processor =
                     new QueryProcessor(
                             analyzerFactory.getAnalyzerStrategy(),
                             reader,
-                            scoreProvider.provide()
+                            scoreRegistry.get()
                     );
 
 
