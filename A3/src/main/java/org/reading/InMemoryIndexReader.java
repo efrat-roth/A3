@@ -10,10 +10,7 @@ import org.storage.invertedIndex.PostingList;
 import org.storage.invertedIndex.TermStats;
 import org.utils.Exceptions;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @AllArgsConstructor
@@ -22,14 +19,10 @@ public class InMemoryIndexReader implements IndexReader {
     private final IndexStorage indexStorage;
 
     @Override
-    public Map<String, PostingList> getPosting(@NonNull String fieldName) {
+    public Optional<Map<String, PostingList>> getPosting(@NonNull String fieldName) {
         log.debug("Retrieving postings for field: {}", fieldName);
-        Map<String, PostingList> postings = indexStorage.getInvertedIndex().getPostings(fieldName);
-        if (postings == null) {
-            log.warn("No postings found for field: {}", fieldName);
-            return Collections.emptyMap();
-        }
-        log.debug("Postings retrieved for field: {}, termCount {}", fieldName, postings.size());
+        Optional<Map<String, PostingList>> postings = Optional.of(indexStorage.getInvertedIndex().getPostings(fieldName));
+        log.debug("Postings retrieved for field: {}, termCount {}", fieldName, postings.get().size());
         return postings;
     }
 
