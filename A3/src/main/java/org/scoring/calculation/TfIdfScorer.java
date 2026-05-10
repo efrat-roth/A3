@@ -25,5 +25,5 @@ public class TfIdfScorer implements ScoreCalculator {
 
         return new ScoreResult(context.getDocId(), score);
     }
-    
+
 }
