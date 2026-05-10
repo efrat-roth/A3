@@ -6,10 +6,11 @@ import org.storage.FieldType;
 import org.utils.Exceptions;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import static java.nio.file.Files.readAllLines;
 
 @Slf4j
 @AllArgsConstructor
@@ -42,18 +43,12 @@ public class IndexFile {
     private List<FieldType> createDocument(String path) throws IOException {
         log.debug("Creating document from file: path={}", path);
 
-        List<String> lines = Files.readAllLines(Path.of(path));
+        List<String> lines = readAllLines(Path.of(path));
         if (lines.isEmpty()) {
             throw new Exceptions.InvalidDocumentException("Document file is empty: " + path);
         }
-        List<FieldType> document = new ArrayList<>();
-        for (int i = 0; i < lines.size(); i++) {
-            String line = lines.get(i);
-
-            log.debug("Processing line {}: {}", i + 1, line);
-
-            document.add(buildField(line, i + 1));
-        }
+        AtomicInteger i = new AtomicInteger(0);
+        List<FieldType> document = lines.stream().map(line -> buildField(line, i.getAndIncrement())).toList();
 
         log.debug("Document creation completed: fieldCount={}", document.size());
         return document;
