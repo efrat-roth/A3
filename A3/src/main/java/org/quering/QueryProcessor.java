@@ -8,13 +8,11 @@ import org.analyzing.analyzerStrategy.AnalyzerStrategy;
 import org.reading.IndexReader;
 import org.scoring.ScoreResult;
 import org.scoring.calculation.ScoreCalculator;
-import org.storage.FieldType;
 import org.storage.invertedIndex.PostingList;
 import org.utils.Exceptions;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Data

@@ -1,6 +1,6 @@
 package org.quering;
+
 import lombok.Data;
-import org.quering.QueryType;
 import org.utils.Exceptions;
 
 import java.util.Map;
@@ -14,7 +14,7 @@ public class Query {
     private final int start;
     private final QueryType queryType;
 
-    public Query(String queryId,Map<String, String> conditions,int limit,int start,QueryType queryType) {
+    public Query(String queryId, Map<String, String> conditions, int limit, int start, QueryType queryType) {
 
         if (queryId == null || queryId.isBlank()) {
             throw new Exceptions.InvalidQueryException("Query id cannot be null or blank");
