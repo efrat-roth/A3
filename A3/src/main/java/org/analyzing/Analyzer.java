@@ -30,7 +30,7 @@ public class Analyzer {
         List<Token> tokens = tokenizer.tokenize(input);
 
         for (TokenFilter tokenFilter : tokenFilters) {
-            tokens = tokenFilter.apply(tokens);
+           tokenFilter.apply(tokens);
         }
 
         log.info("Analysis completed: tokenCount {}", tokens.size());

@@ -27,16 +27,15 @@ public class InMemoryInvertedIndex implements InvertedIndex {
             log.debug("Creating new field entry in inverted index: field {}", fieldName);
             index.put(fieldName, new HashMap<>());
         }
-        Map<String, PostingList> fieldEntry = index.get(fieldName);
-        if (!fieldEntry.containsKey(token)) {
+
+        Map<String, PostingList> fieldEntry = index.computeIfAbsent(token, t -> {
             log.debug("Creating new posting list: field {}, token {}, docId {}", fieldName, token, docId);
             Map<String, TermStats> postings = new HashMap<>();
             postings.put(docId, new TermStats(1.0 / docLength, new ArrayList<>(List.of(position))));
-            fieldEntry.put(token, new PostingList(postings));
-        } else {
-            log.debug("Updating posting list: field {}, token {}, docId {}", fieldName, token, docId);
-            addDoc(fieldEntry, token, docId, position, docLength);
-        }
+            return Map.of(token, new PostingList(postings));
+        });
+        log.debug("Updating posting list: field {}, token {}, docId {}", fieldName, token, docId);
+        addDoc(fieldEntry, token, docId, position, docLength);
 
     }
 

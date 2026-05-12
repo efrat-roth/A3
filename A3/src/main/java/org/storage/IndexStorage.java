@@ -8,10 +8,7 @@ import org.utils.Exceptions.DocumentNotFoundException;
 import org.utils.Exceptions.DuplicateDocumentException;
 import org.utils.Exceptions.InvalidDocumentException;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -33,7 +30,7 @@ public class IndexStorage {
         } else if (this.documents.containsKey(documentId)) {
             log.warn("Document has already been initialized: id {}", documentId);
             throw new DuplicateDocumentException("Document already exists: " + documentId);
-        } else if (document.stream().anyMatch(field -> field == null)) {
+        } else if (document.stream().anyMatch(Objects::isNull)) {
             log.warn("Document contains null field: id {}", documentId);
             throw new InvalidDocumentException("Document cannot contain null fields: " + documentId);
         }

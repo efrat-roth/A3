@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface TokenFilter {
 
-    List<Token> apply(List<Token> tokens) throws IOException;
+    void apply(List<Token> tokens) throws IOException;
 }

@@ -1,6 +1,7 @@
 package org.storage.invertedIndex;
 
 import lombok.Getter;
+import lombok.NonNull;
 import org.utils.Exceptions.InvalidTermStatsException;
 
 import java.util.List;
@@ -8,16 +9,14 @@ import java.util.List;
 public class TermStats {
     @Getter
     private double tf;
-    @Getter
+    @Getter @NonNull
     private List<Integer> positions;
 
-    public TermStats(double tf, List<Integer> positions) {
+    public TermStats(double tf, @NonNull List<Integer> positions) {
         if (tf < 0) {
             throw new InvalidTermStatsException("Term frequency cannot be negative: " + tf);
         }
-        if (positions == null) {
-            throw new InvalidTermStatsException("Positions cannot be null");
-        }
+
         if (positions.stream().anyMatch(position -> position == null || position < 0)) {
             throw new InvalidTermStatsException("Positions cannot contain null or negative values");
         }

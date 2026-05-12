@@ -27,24 +27,17 @@ public class StopwordsTokenFilter implements TokenFilter {
     }
 
     @Override
-    public List<Token> apply(List<Token> tokens) {
+    public void apply(List<Token> tokens) {
 
         if (tokens == null) {
             throw new Exceptions.InvalidDocumentException("Token list cannot be null");
         }
+        int originalSize = tokens.size();
+        log.debug("Applying stopwords token filter: inputTokenCount {}", tokens.size());
 
-        log.debug("Applying stopwords token filter: inputTokenCount {}",tokens.size());
+        tokens.removeIf(token -> stopwords.contains(token.term()));
 
-        List<Token> filteredTokens = new ArrayList<>(tokens.size());
+        log.debug("Stopwords filter applied: removed {} tokens", originalSize - tokens.size());
 
-        for (Token token : tokens) {
-            if (!stopwords.contains(token.term())) {
-                filteredTokens.add(token);
-            }
-        }
-
-        log.debug("Stopwords filter applied: removed {} tokens",tokens.size() - filteredTokens.size());
-
-        return filteredTokens;
     }
 }
