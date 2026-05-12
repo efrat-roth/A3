@@ -6,9 +6,7 @@ import org.utils.Exceptions.FieldNotFoundException;
 import org.utils.Exceptions.InvalidIndexEntryException;
 import org.utils.Exceptions.TermNotFoundException;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -16,41 +14,18 @@ public class InMemoryInvertedIndex implements InvertedIndex {
     @Getter
     private Map<String, Map<String, PostingList>> index = new HashMap<>();
 
-    public void addField(String fieldName, String token, String docId, int position, int docLength) {
-        log.debug("Adding field to inverted index: field {}, token {}, docId {}, position {}", fieldName, token, docId, position);
-        addTerm(fieldName, token, docId, position, docLength);
-    }
 
     public void addTerm(String fieldName, String token, String docId, int position, int docLength) {
         validateIndexEntry(fieldName, token, docId, position, docLength);
-        if (!index.containsKey(fieldName)) {
-            log.debug("Creating new field entry in inverted index: field {}", fieldName);
-            index.put(fieldName, new HashMap<>());
-        }
+        Map<String, PostingList> fieldEntry = index.computeIfAbsent(fieldName, f -> new HashMap<>());
+        PostingList postingList = fieldEntry.computeIfAbsent(token, t -> new PostingList());
+        postingList.addOccurrence(docId, position);
 
-        Map<String, PostingList> fieldEntry = index.computeIfAbsent(token, t -> {
-            log.debug("Creating new posting list: field {}, token {}, docId {}", fieldName, token, docId);
-            Map<String, TermStats> postings = new HashMap<>();
-            postings.put(docId, new TermStats(1.0 / docLength, new ArrayList<>(List.of(position))));
-            return Map.of(token, new PostingList(postings));
-        });
         log.debug("Updating posting list: field {}, token {}, docId {}", fieldName, token, docId);
-        addDoc(fieldEntry, token, docId, position, docLength);
 
     }
 
-    private void addDoc(Map<String, PostingList> fieldEntry, String token, String docId, int position, int docLength) {
-        Map<String, TermStats> tokenEntry = fieldEntry.get(token).getPostings();
-        if (tokenEntry.containsKey(docId)) {
-            log.debug("Updating term stats for existing document: token {}, docId {}, position {}", token, docId, position);
-            tokenEntry.get(docId).incrementTf(1.0);
-            tokenEntry.get(docId).getPositions().add(position);
-        } else {
-            log.debug("Adding document to posting list: token {}, docId {}, position {}", token, docId, position);
-            tokenEntry.put(docId, new TermStats(1.0 / docLength, new ArrayList<>(List.of(position))));
-        }
-    }
-    public PostingList getPostingListByTerm(String fieldName, String term){
+    public PostingList getPostingListByTerm(String fieldName, String term) {
         validateFieldName(fieldName);
         validateTerm(term);
         Map<String, PostingList> fieldEntry = index.get(fieldName);
@@ -63,14 +38,16 @@ public class InMemoryInvertedIndex implements InvertedIndex {
         }
         return fieldEntry.get(term);
     }
-    public Map<String,PostingList> getPostings(String fieldName){
+
+    public Map<String, PostingList> getPostings(String fieldName) {
         validateFieldName(fieldName);
         Map<String, PostingList> postings = index.get(fieldName);
         if (postings == null) {
             log.warn("Postings lookup failed because field was not found: field {}", fieldName);
             throw new FieldNotFoundException("Field not found in inverted index: " + fieldName);
         }
-        return postings; }
+        return postings;
+    }
 
     private void validateIndexEntry(String fieldName, String token, String docId, int position, int docLength) {
         validateFieldName(fieldName);

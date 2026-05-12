@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.storage.FieldType;
 import org.storage.IndexStorage;
 import org.storage.invertedIndex.InvertedIndex;
+import org.storage.invertedIndex.Posting;
 import org.storage.invertedIndex.PostingList;
 import org.storage.invertedIndex.TermStats;
 import org.utils.Exceptions;
@@ -40,20 +41,22 @@ public class InMemoryIndexReader implements IndexReader {
 
             for (String term : fieldEntry.getValue()) {
                 InvertedIndex inverted = indexStorage.getInvertedIndex();
-                PostingList postings;
+                PostingList postingList;
                 try {
-                    postings = inverted.getPostingListByTerm(fieldName, term);
+                    postingList = inverted.getPostingListByTerm(fieldName, term);
                 } catch (Exceptions.TermNotFoundException e) {
                     log.debug("Skipping missing term: field {}, term {}", fieldName, term);
                     continue;
                 }
 
-                int df = postings.getPostings().size();
+                int df = postingList.getPostings().size();
                 double idf = Math.log((totalDocs + 1.0) / (df + 1.0));
-                TermStats stats = postings.getPostings().get(docId);
-                if (stats != null) {
-                    termScores.add(new TermScoreDTO(term, stats, idf));
+                Posting posting = postingList.getPostings().get(docId);
+
+                if (posting != null) {
+                    termScores.add(new TermScoreDTO(term, posting, idf));
                 }
+
 
             }
         }

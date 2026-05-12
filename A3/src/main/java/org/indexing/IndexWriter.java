@@ -58,8 +58,8 @@ public abstract class IndexWriter {
     private void writeToIndex(List<FieldType> analyzedFields, String docId, int docLength) {
         analyzedFields.forEach(field -> {
             field.getValues().forEach(token ->
-                    indexStorage.getInvertedIndex().addField(
-                            field.getFieldName(), token.term(), docId, token.position(), docLength));
+                    indexStorage.getInvertedIndex().addTerm(
+                            field.getFieldName(), token(), docId, token.position(), docLength));
         });
     }
 
