@@ -12,7 +12,7 @@ import org.scoring.calculation.ScoreRegistry;
 import org.storage.FieldDefinition;
 import org.storage.FieldValue;
 import org.storage.IndexStorage;
-import org.storage.invertedIndex.InvertedIndexProvider;
+import org.storage.invertedIndex.InvertedIndexFactory;
 import org.utils.ConfigLoader;
 import org.utils.config.AppConfig;
 
@@ -31,8 +31,8 @@ public class Main {
             AnalyzerStrategyFactory analyzerFactory = new AnalyzerStrategyFactory(appConfig);
 
             // 2. Build Storage
-            InvertedIndexProvider invertedIndexProvider = new InvertedIndexProvider(appConfig);
-            IndexStorage indexStorage = new IndexStorage(invertedIndexProvider.provide());
+            InvertedIndexFactory invertedIndexFactory = new InvertedIndexFactory(appConfig);
+            IndexStorage indexStorage = new IndexStorage(invertedIndexFactory.create());
 
             // 3. Build Writer
             InMemoryIndexWriter writer =

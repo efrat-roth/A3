@@ -9,6 +9,7 @@ import java.io.IOException;
 
 
 public class ConfigLoader {
+    //check singelton annotation
     private static final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
 
     public static AppConfig load() throws IOException {

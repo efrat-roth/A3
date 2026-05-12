@@ -1,6 +1,7 @@
 package org.analyzing;
 
 import lombok.Builder;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.analyzing.charFilters.CharFilter;
 import org.analyzing.tokenFilters.TokenFilter;
@@ -8,18 +9,23 @@ import org.analyzing.tokenizers.Tokenizer;
 import org.utils.Exceptions;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
 @Builder
 public class Analyzer {
-
-    private List<CharFilter> charFilters;
-    private Tokenizer tokenizer;
-    private List<TokenFilter> tokenFilters;
+    @NonNull
+    private final List<CharFilter> charFilters;
+    @NonNull
+    private final Tokenizer tokenizer;
+    @Builder.Default
+    private final List<TokenFilter> tokenFilters= new ArrayList<>();
 
     public List<Token> analyze(String input) throws IOException {
-        validate(input);
+        if (input == null) {
+            throw new Exceptions.InvalidDocumentException("Input text cannot be null");
+        }
         log.debug("Starting analysis: inputLength {}, charFilterCount {}, tokenFilterCount {}",
                 input.length(), charFilters.size(), tokenFilters.size());
 
@@ -38,22 +44,4 @@ public class Analyzer {
         return tokens;
     }
 
-    private void validate(String input) {
-
-        if (input == null) {
-            throw new Exceptions.InvalidDocumentException("Input text cannot be null");
-        }
-
-        if (tokenizer == null) {
-            throw new Exceptions.AnalyzerConfigurationException("Tokenizer is not configured");
-        }
-
-        if (charFilters == null) {
-            throw new Exceptions.AnalyzerConfigurationException("Char filters are not configured");
-        }
-
-        if (tokenFilters == null) {
-            throw new Exceptions.AnalyzerConfigurationException("Token filters are not configured");
-        }
-    }
 }
