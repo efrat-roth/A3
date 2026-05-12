@@ -3,7 +3,6 @@ package reading;
 import org.junit.jupiter.api.Test;
 import org.reading.InMemoryIndexReader;
 import org.reading.QueryContext;
-import org.storage.FieldType;
 import org.storage.IndexStorage;
 import org.storage.invertedIndex.InMemoryInvertedIndex;
 import org.storage.invertedIndex.PostingList;

@@ -2,7 +2,8 @@ package org.indexing;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.storage.FieldType;
+import org.storage.FieldDefinition;
+import org.storage.FieldValue;
 import org.utils.Exceptions;
 
 import java.io.IOException;
@@ -22,7 +23,7 @@ public class IndexFile {
         validatePath(path);
         log.info("Starting file indexing: path={}", path);
         try {
-            List<FieldType> document = createDocument(path);
+            List<FieldValue> document = createDocument(path);
 
             log.debug("Document created from file: path={}, fieldCount={}", path, document.size());
 
@@ -40,7 +41,7 @@ public class IndexFile {
         }
     }
 
-    private List<FieldType> createDocument(String path) throws IOException {
+    private List<FieldValue> createDocument(String path) throws IOException {
         log.debug("Creating document from file: path={}", path);
 
         List<String> lines = readAllLines(Path.of(path));
@@ -48,13 +49,13 @@ public class IndexFile {
             throw new Exceptions.InvalidDocumentException("Document file is empty: " + path);
         }
         AtomicInteger i = new AtomicInteger(0);
-        List<FieldType> document = lines.stream().map(line -> buildField(line, i.getAndIncrement())).toList();
+        List<FieldValue> document = lines.stream().map(line -> buildField(line, i.getAndIncrement())).toList();
 
         log.debug("Document creation completed: fieldCount={}", document.size());
         return document;
     }
 
-    private FieldType buildField(String line, int lineNumber) {
+    private FieldValue buildField(String line, int lineNumber) {
         log.debug("Building field from line {}", lineNumber);
 
         String[] fieldSplit = line.split(":", 2);
@@ -74,8 +75,13 @@ public class IndexFile {
         }
 
         log.debug("Field built: name={}, length={}", fieldName, content.length());
+        FieldDefinition definition = indexWriter.getOrCreateFieldDefinition(
+                fieldName,
+                true,
+                true
+        );
 
-        return new FieldType(fieldName, content.length(), true, true, content);
+        return new FieldValue(definition, content, content.length());
     }
 
     private void validatePath(String path) {

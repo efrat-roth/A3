@@ -1,6 +1,6 @@
 package org.reading;
 
-import org.storage.FieldType;
+import org.storage.FieldValue;
 import org.storage.invertedIndex.PostingList;
 
 import java.util.List;
@@ -12,5 +12,5 @@ public interface IndexReader {
 
     QueryContext buildContext(String docId, Map<String, List<String>> queryTermsByFields);
 
-    List<FieldType> getDocument(String docId);
+    List<FieldValue> getDocument(String docId);
 }

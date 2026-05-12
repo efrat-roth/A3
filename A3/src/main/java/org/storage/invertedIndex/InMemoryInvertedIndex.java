@@ -15,8 +15,8 @@ public class InMemoryInvertedIndex implements InvertedIndex {
     private Map<String, Map<String, PostingList>> index = new HashMap<>();
 
 
-    public void addTerm(String fieldName, String token, String docId, int position, int docLength) {
-        validateIndexEntry(fieldName, token, docId, position, docLength);
+    public void addTerm(String fieldName, String token, String docId, int position) {
+        validateIndexEntry(fieldName, token, docId, position);
         Map<String, PostingList> fieldEntry = index.computeIfAbsent(fieldName, f -> new HashMap<>());
         PostingList postingList = fieldEntry.computeIfAbsent(token, t -> new PostingList());
         postingList.addOccurrence(docId, position);
@@ -49,7 +49,7 @@ public class InMemoryInvertedIndex implements InvertedIndex {
         return postings;
     }
 
-    private void validateIndexEntry(String fieldName, String token, String docId, int position, int docLength) {
+    private void validateIndexEntry(String fieldName, String token, String docId, int position) {
         validateFieldName(fieldName);
         validateTerm(token);
         if (docId == null || docId.isBlank()) {
@@ -57,9 +57,6 @@ public class InMemoryInvertedIndex implements InvertedIndex {
         }
         if (position < 0) {
             throw new InvalidIndexEntryException("Position cannot be negative: " + position);
-        }
-        if (docLength <= 0) {
-            throw new InvalidIndexEntryException("Document length must be positive: " + docLength);
         }
     }
 

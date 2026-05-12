@@ -1,13 +1,24 @@
 package org.storage;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NonNull;
 import org.analyzing.Token;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
+@AllArgsConstructor
+@Getter
 public class FieldValue {
+    @NonNull
+    private final FieldDefinition definition;
+    @NonNull
     private final String content;
-    private List<Token> values = new ArrayList<>();
+    private final int length;
+    private final List<Token> tokens = new ArrayList<>();
+
+    public void addToken(Token token) {
+        tokens.add(token);
+    }
 }

@@ -10,7 +10,6 @@ import org.reading.IndexReader;
 import org.reading.QueryContext;
 import org.scoring.ScoreResult;
 import org.scoring.calculation.ScoreCalculator;
-import org.storage.FieldType;
 import org.storage.invertedIndex.PostingList;
 import org.storage.invertedIndex.TermStats;
 import org.utils.Exceptions;

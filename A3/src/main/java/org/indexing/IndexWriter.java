@@ -4,66 +4,83 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.analyzing.Token;
 import org.analyzing.analyzerStrategy.AnalyzerStrategy;
-import org.storage.FieldType;
+import org.storage.FieldDefinition;
+import org.storage.FieldValue;
 import org.storage.IndexStorage;
 import org.utils.Exceptions;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.lang.reflect.Type;
+import java.util.*;
 
 @Slf4j
 @RequiredArgsConstructor
 public abstract class IndexWriter {
+
     private final AnalyzerStrategy analyzerStrategy;
     private final IndexStorage indexStorage;
+    private final Map<String, FieldDefinition> schema = new HashMap<>();
 
-    public void addDocument(List<FieldType> document) {
+    public FieldDefinition getOrCreateFieldDefinition(String fieldName, boolean stored, boolean indexed) {
+        return schema.computeIfAbsent(fieldName, f ->
+                new FieldDefinition(fieldName, stored, indexed)
+        );
+    }
+
+    public void addDocument(List<FieldValue> document) {
         validateDocument(document);
-        String docId = UUID.randomUUID().toString();
-        int docLength = document.stream().mapToInt(FieldType::getLength).sum();
 
-        log.info("Adding document to in-memory index: docId {}, fieldCount {}, docLength {}",
-                docId, document.size(), docLength);
+        String docId = UUID.randomUUID().toString();
+
+        log.info("Adding document to index: docId {}, fieldCount {}",
+                docId, document.size());
 
         try {
-            List<FieldType> analyzedFields = analyzeDocument(document, docId);
-            writeToIndex(analyzedFields, docId, docLength);
+            List<FieldValue> analyzedFields = analyzeDocument(document, docId);
+            writeToIndex(analyzedFields, docId);
             indexStorage.addDocument(docId, document);
-            log.info("Document added to in-memory index: docId {}", docId);
+
+            log.info("Document added successfully: docId {}", docId);
 
         } catch (IOException e) {
             log.error("Failed indexing document: docId {}", docId, e);
-
             throw new Exceptions.IndexingException("Failed to index document: " + docId, e);
         }
     }
 
-    private List<FieldType> analyzeDocument(List<FieldType> document, String docId) throws IOException {
-        List<FieldType> analyzed = new ArrayList<>();
-        for (FieldType field : document) {
-            if (!field.isIndexed()) {
+    private List<FieldValue> analyzeDocument(List<FieldValue> document, String docId) throws IOException {
+        List<FieldValue> analyzed = new ArrayList<>();
+
+        for (FieldValue field : document) {
+
+            if (!field.getDefinition().indexed()) {
                 continue;
             }
-            log.debug("Analyzing field: docId {}, field {}", docId, field.getFieldName());
-            List<Token> tokens = analyzerStrategy.getAnalyzer(field.getFieldName()).analyze(field.getContent());
-            field.setValues(tokens);
+
+            log.debug("Analyzing field: docId {}, field {}", docId, field.getDefinition().fieldName());
+
+            List<Token> tokens = analyzerStrategy.getAnalyzer(field.getDefinition().fieldName())
+                            .analyze(field.getContent());
+
+            tokens.forEach(field::addToken);
             analyzed.add(field);
-            log.debug("Field analyzed: docId {}, field {}, tokenCount {}", docId, field.getFieldName(), tokens.size());
+
+            log.debug("Field analyzed: docId {}, field {}, tokenCount {}",
+                    docId, field.getDefinition().fieldName(), tokens.size());
         }
+
         return analyzed;
     }
 
-    private void writeToIndex(List<FieldType> analyzedFields, String docId, int docLength) {
+    private void writeToIndex(List<FieldValue> analyzedFields, String docId) {
+
         analyzedFields.forEach(field -> {
-            field.getValues().forEach(token ->
-                    indexStorage.getInvertedIndex().addTerm(
-                            field.getFieldName(), token(), docId, token.position(), docLength));
-        });
+            String fieldName = field.getDefinition().fieldName();
+            field.getTokens().forEach(token ->
+                    indexStorage.getInvertedIndex().addTerm(fieldName,token.term(),docId,token.position()));});
     }
 
-    private void validateDocument(List<FieldType> document) {
+    private void validateDocument(List<FieldValue> document) {
         if (document == null) {
             throw new Exceptions.InvalidDocumentException("Document cannot be null");
         }
@@ -73,7 +90,7 @@ public abstract class IndexWriter {
         }
 
         boolean hasInvalidField = document.stream().anyMatch(field ->
-                field == null || field.getFieldName().isBlank());
+                field == null || field.getDefinition().fieldName().isBlank());
 
         if (hasInvalidField) {
             throw new Exceptions.InvalidFieldException("Document contains invalid field");

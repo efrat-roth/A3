@@ -9,14 +9,14 @@ import org.quering.QueryProcessor;
 import org.quering.QueryType;
 import org.reading.InMemoryIndexReader;
 import org.scoring.calculation.ScoreRegistry;
-import org.storage.FieldType;
+import org.storage.FieldDefinition;
+import org.storage.FieldValue;
 import org.storage.IndexStorage;
 import org.storage.invertedIndex.InvertedIndexProvider;
 import org.utils.ConfigLoader;
 import org.utils.config.AppConfig;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 public class Main {
@@ -46,22 +46,16 @@ public class Main {
 
             String content1 = "Java, Search Engine.";
             String content2 = "Java is a @powerful language for building search engine";
-            List<FieldType> document = List.of(
-                    new FieldType(
-                            "title",
-                            String.class,
-                            content1.length(),
-                            false,
-                            true,
-                            content1
+            List<FieldValue> document = List.of(
+                    new FieldValue(
+                            new FieldDefinition("title", false, true),
+                            content1,
+                            content1.length()
                     ),
-                    new FieldType(
-                            "body",
-                            String.class,
-                            content2.length(),
-                            true,
-                            true,
-                            content2
+                    new FieldValue(
+                            new FieldDefinition("body", true, true),
+                            content2,
+                            content2.length()
                     )
             );
 
@@ -69,22 +63,16 @@ public class Main {
 
             String content3 = "All all or Nothing";
             String content4 = "Is knowing the all details good?";
-            List<FieldType> document2 = List.of(
-                    new FieldType(
-                            "title",
-                            String.class,
-                            content3.length(),
-                            true,
-                            true,
-                            content3
+            List<FieldValue> document2 = List.of(
+                    new FieldValue(
+                            new FieldDefinition("title", true, true),
+                            content3,
+                            content3.length()
                     ),
-                    new FieldType(
-                            "body",
-                            String.class,
-                            content4.length(),
-                            true,
-                            true,
-                            content4
+                    new FieldValue(
+                            new FieldDefinition("body", true, true),
+                            content4,
+                            content4.length()
                     )
             );
 
@@ -132,8 +120,8 @@ public class Main {
                 System.out.println("Doc id: " + docQueryResult.docId());
                 System.out.println("Score: " + docQueryResult.score());
                 System.out.println("Doc fields:");
-                for (FieldType field : docQueryResult.fields()) {
-                    System.out.println("\t" + field.getFieldName() + ": " + field.getContent());
+                for (FieldValue field : docQueryResult.fields()) {
+                    System.out.println("\t" + field.getDefinition().fieldName() + ": " + field.getContent());
                 }
 
             }

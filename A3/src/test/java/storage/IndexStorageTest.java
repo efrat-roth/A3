@@ -1,7 +1,6 @@
 package storage;
 
 import org.junit.jupiter.api.Test;
-import org.storage.FieldType;
 import org.storage.IndexStorage;
 import org.storage.invertedIndex.InMemoryInvertedIndex;
 import org.storage.invertedIndex.InvertedIndex;

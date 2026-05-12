@@ -1,7 +1,6 @@
 package storage;
 
 import org.junit.jupiter.api.Test;
-import org.storage.FieldType;
 import org.utils.Exceptions.InvalidFieldException;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
