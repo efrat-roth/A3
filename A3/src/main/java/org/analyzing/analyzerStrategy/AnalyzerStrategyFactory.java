@@ -41,7 +41,6 @@ public class AnalyzerStrategyFactory {
                     fieldAnalyzers.put(entry.getKey(), buildAnalyzer(entry.getValue()));
                 }
                 analyzerStrategy = new FieldBasedAnalyzerStrategy(fieldAnalyzers);
-                ;
             }
 
             default -> throw new Exceptions.UnsupportedAnalyzerStrategyException(
