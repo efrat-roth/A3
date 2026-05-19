@@ -1,0 +1,35 @@
+storage:
+  type: inMemory
+  stopwordsFilePath: src/main/data/stopwords.txt
+
+index:
+  maxResults: 100
+  scoringAlgorithm: tfIdf
+
+analyzer:
+  strategy: default
+
+  analyzerDefinition:
+    charFilters:
+      - lowercase
+      - punctuation
+    tokenizer: whitespace
+    tokenFilters:
+      - stopwords
+
+  fields:
+    title:
+      charFilters:
+        - lowercase
+        - punctuation
+      tokenizer: whitespace
+      tokenFilters:
+        - stopwords
+
+    body:
+      charFilters:
+        - lowercase
+        - punctuation
+      tokenizer: whitespace
+      tokenFilters:
+        - stopwords

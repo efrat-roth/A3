@@ -1,0 +1,6 @@
+id: "1"
+    name: "Wireless Mous"
+    description: "Ergonomic wireless mouse"
+    category: ["electronics"]
+    price: 25.99
+    inStock: true

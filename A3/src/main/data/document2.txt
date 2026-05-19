@@ -1,0 +1,6 @@
+    id: "2"
+    name: "Gaming Keyboard"
+    description: "Mechanical RGB keyboard"
+    category: ["electronics", "gaming"]
+    price: 89.99
+    inStock: true

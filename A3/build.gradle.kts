@@ -13,6 +13,28 @@ dependencies {
     testImplementation(platform("org.junit:junit-bom:6.0.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    compileOnly("org.projectlombok:lombok:1.18.30")
+    annotationProcessor("org.projectlombok:lombok:1.18.30")
+    // Lombok
+    compileOnly("org.projectlombok:lombok:1.18.30")
+    annotationProcessor("org.projectlombok:lombok:1.18.30")
+    testCompileOnly("org.projectlombok:lombok:1.18.30")
+    testAnnotationProcessor("org.projectlombok:lombok:1.18.30")
+
+    // SLF4J API
+    implementation("org.slf4j:slf4j-api:2.0.9")
+
+    // Log4j2 Core and API
+    implementation("org.apache.logging.log4j:log4j-core:2.25.4")
+    implementation("org.apache.logging.log4j:log4j-api:2.20.0")
+
+    // SLF4J to Log4j2 Bridge (Routes SLF4J calls to Log4j2)
+    implementation("org.apache.logging.log4j:log4j-slf4j2-impl:2.20.0")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.18.0")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
+    testImplementation("org.mockito:mockito-core:5.11.0")
+    testImplementation("org.assertj:assertj-core:3.25.3")
 }
 
 tasks.test {
